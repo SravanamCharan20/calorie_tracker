@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import AuthLayout, { AuthField } from "../../components/auth/AuthLayout";
+
 const BASE_URL = import.meta.env.VITE_BASE_URL ?? "http://localhost:6969";
 
 const Signup = () => {
@@ -8,6 +10,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
 
@@ -16,6 +19,7 @@ const Signup = () => {
 
     setError("");
     setSuccess("");
+    setIsSubmitting(true);
 
     try {
       const response = await fetch(`${BASE_URL}/auth/signup`, {
@@ -43,53 +47,77 @@ const Signup = () => {
     } catch (error) {
       console.log("Error", error);
       setError("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <h1>Signup Form</h1>
-
-        <label className="text-blue-600">Username</label>
-        <input
-          className="border-amber-400 border-4"
+    <AuthLayout
+      title="Create your account"
+      subtitle="Start tracking calories and macros with a clear daily overview."
+      footerText="Already have an account?"
+      footerLinkText="Sign in"
+      footerLinkTo="/signin"
+    >
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <AuthField
+          label="Username"
           id="signup-username"
-          name="username"
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          required
+          placeholder="Choose a username"
+          autoComplete="username"
         />
 
-        <label className="text-blue-600">Email</label>
-        <input
-          className="border-amber-400 border-4"
+        <AuthField
+          label="Email"
           id="signup-email"
-          name="email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required
+          placeholder="you@example.com"
+          autoComplete="email"
         />
 
-        <label className="text-blue-600">Password</label>
-        <input
-          className="border-amber-400 border-4"
+        <AuthField
+          label="Password"
           id="signup-password"
-          name="password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required
+          placeholder="Create a password"
+          autoComplete="new-password"
         />
 
-        <button type="submit">Submit</button>
+        {error && (
+          <p
+            role="alert"
+            className="rounded-2xl border border-error/30 bg-error/10 px-4 py-3 text-sm text-error"
+          >
+            {error}
+          </p>
+        )}
 
-        {error && <h2 className="text-red-500">{error}</h2>}
-        {success && <h2 className="text-green-600">{success}</h2>}
+        {success && (
+          <p
+            role="status"
+            className="rounded-2xl border border-success/30 bg-success/10 px-4 py-3 text-sm text-success"
+          >
+            {success}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="mt-2 w-full rounded-full bg-white px-6 py-3.5 text-[15px] font-semibold text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isSubmitting ? "Creating account…" : "Create account"}
+        </button>
       </form>
-    </div>
+    </AuthLayout>
   );
 };
 
