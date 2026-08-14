@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import AuthLayout, { AuthField } from "../../components/auth/AuthLayout";
+import { useAuth } from "../../context/AuthContext";
+
 
 const BASE_URL = import.meta.env.VITE_BASE_URL ?? "http://localhost:6969";
 
@@ -11,6 +13,7 @@ const Signin = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
+  const {login} = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,6 +39,8 @@ const Signin = () => {
         setError(data.message || "Unable to sign in.");
         return;
       }
+
+      login(data.user);
 
       navigate("/dashboard");
     } catch (error) {

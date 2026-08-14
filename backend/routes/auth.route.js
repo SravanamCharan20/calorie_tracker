@@ -1,5 +1,6 @@
 import express from "express";
 import User from "../models/user.model.js";
+import userAuth from "../middlewares/auth.middleware.js";
 
 const authRouter = express.Router();
 authRouter.post("/signup", async (req, res) => {
@@ -62,6 +63,26 @@ authRouter.post("/signin", async (req, res) => {
     console.log("Error : ", error);
     return res.status(500).json({ message: "Error While Signin !!" });
   }
+});
+
+authRouter.post("/logout", (req, res) => {
+  const isProd = process.env.NODE_ENV === "production";
+
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
+  });
+
+  return res.status(200).json({
+    message: "Logout successful",
+  });
+});
+
+authRouter.get("/me", userAuth,async (req, res) => {
+  return res.status(200).json({
+    user: req.user,
+  });
 });
 
 export default authRouter;
