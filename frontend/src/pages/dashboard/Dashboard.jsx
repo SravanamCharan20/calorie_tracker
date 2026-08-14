@@ -7,8 +7,11 @@ import {
   calculateNutritionTotals,
   calculateNutritionProgress,
   calculateWeeklyCalories,
+  calculateWeeklyMacros,
   calculateMacroDistribution,
   calculateMacroPercentages,
+  calculateMicronutrientTotals,
+  calculateGoalComparison,
   formatRecentMeals,
 } from "../../utils/nutritionCal.js";
 import DashboardLayout from "../../components/dashboard/DashboardLayout.jsx";
@@ -16,7 +19,9 @@ import Header from "../../components/dashboard/Header.jsx";
 import WelcomeSection from "../../components/dashboard/WelcomeSection.jsx";
 import NutritionSummary from "../../components/dashboard/NutritionSummary.jsx";
 import WeeklyCaloriesChart from "../../components/dashboard/WeeklyCaloriesChart.jsx";
-import MacroDistribution from "../../components/dashboard/MacroDistribution.jsx";
+import MacroBreakdown from "../../components/dashboard/MacroBreakdown.jsx";
+import MicronutrientSummary from "../../components/dashboard/MicronutrientSummary.jsx";
+import GoalComparison from "../../components/dashboard/GoalComparison.jsx";
 import RecentMeals from "../../components/dashboard/RecentMeals.jsx";
 import LoadingDashboard from "../../components/dashboard/LoadingDashboard.jsx";
 import ErrorDashboard from "../../components/dashboard/ErrorDashboard.jsx";
@@ -102,6 +107,14 @@ const Dashboard = () => {
 
   const macroPercentages = calculateMacroPercentages(macroDistribution);
 
+  const weeklyMacros = calculateWeeklyMacros(weeklyMeals);
+
+  const micronutrientTotals = calculateMicronutrientTotals(meals);
+
+  const goalComparison = goal
+    ? calculateGoalComparison(nutritionTotals, goal)
+    : null;
+
   const recentMeals = formatRecentMeals(meals);
 
   return (
@@ -109,11 +122,14 @@ const Dashboard = () => {
       <Header title="Dashboard" />
       <WelcomeSection username={user.username} />
 
-      <NutritionSummary
-        nutritionTotals={nutritionTotals}
-        nutritionProgress={nutritionProgress}
-        goal={goal}
-      />
+      <section className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <NutritionSummary
+          nutritionTotals={nutritionTotals}
+          nutritionProgress={nutritionProgress}
+          goal={goal}
+        />
+        <GoalComparison goalComparison={goalComparison} />
+      </section>
 
       <section className="mb-6 grid grid-cols-1 gap-4 xl:grid-cols-5">
         <div className="xl:col-span-3">
@@ -123,11 +139,16 @@ const Dashboard = () => {
           />
         </div>
         <div className="xl:col-span-2">
-          <MacroDistribution
-            macroPercentages={macroPercentages}
-            totalCalories={nutritionTotals.calories}
+          <MacroBreakdown
+            dailyMacros={macroDistribution}
+            dailyPercentages={macroPercentages}
+            weeklyMacros={weeklyMacros}
           />
         </div>
+      </section>
+
+      <section className="mb-6">
+        <MicronutrientSummary micronutrients={micronutrientTotals} />
       </section>
 
       <RecentMeals recentMeals={recentMeals} />

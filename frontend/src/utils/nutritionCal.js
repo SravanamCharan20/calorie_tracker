@@ -142,7 +142,62 @@ export const calculateWeeklyCalories = (meals) => {
     }));
   };
 
-  export const calculateGoalComparison = (totals, goal) => {
+export const calculateWeeklyMacros = (meals) => {
+  const today = new Date();
+  const weeklyMacros = [];
+
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date(today);
+    date.setDate(today.getDate() - i);
+
+    const dateKey = date.toISOString().split("T")[0];
+
+    const dayMeals = meals.filter((meal) => {
+      const mealDate = new Date(meal.consumedAt).toISOString().split("T")[0];
+      return mealDate === dateKey;
+    });
+
+    const macros = calculateMacroDistribution(dayMeals);
+
+    weeklyMacros.push({
+      date: dateKey,
+      day: date.toLocaleDateString("en-US", { weekday: "short" }),
+      ...macros,
+    });
+  }
+
+  return weeklyMacros;
+};
+
+export const calculateMicronutrientTotals = (meals) => {
+  return meals.reduce(
+    (totals, meal) => {
+      const micro = meal.micronutrients ?? {};
+
+      totals.iron += micro.iron ?? 0;
+      totals.calcium += micro.calcium ?? 0;
+      totals.vitaminC += micro.vitaminC ?? 0;
+      totals.vitaminD += micro.vitaminD ?? 0;
+
+      return totals;
+    },
+    {
+      iron: 0,
+      calcium: 0,
+      vitaminC: 0,
+      vitaminD: 0,
+    },
+  );
+};
+
+export const MICRONUTRIENT_REFERENCES = {
+  iron: { label: "Iron", unit: "mg", target: 18 },
+  calcium: { label: "Calcium", unit: "mg", target: 1000 },
+  vitaminC: { label: "Vitamin C", unit: "mg", target: 90 },
+  vitaminD: { label: "Vitamin D", unit: "IU", target: 600 },
+};
+
+export const calculateGoalComparison = (totals, goal) => {
     return {
       calories: {
         target: goal.dailyCalorieTarget,

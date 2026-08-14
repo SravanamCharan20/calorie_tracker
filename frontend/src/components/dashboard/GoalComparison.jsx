@@ -9,7 +9,7 @@ const GoalComparison = ({ goalComparison }) => {
   if (!goalComparison) return null;
 
   return (
-    <article className="rounded-3xl border border-border bg-card p-6 sm:p-7">
+    <article className="flex h-full flex-col rounded-2xl border border-border bg-card p-6 sm:p-7">
       <div className="mb-6">
         <h3 className="text-lg font-semibold text-white">Goal vs actual</h3>
         <p className="mt-1 text-sm text-muted">How today is tracking</p>
