@@ -1,6 +1,7 @@
 import express from "express";
 import User from "../models/user.model.js";
 import userAuth from "../middlewares/auth.middleware.js";
+import Goal from "../models/goal.model.js";
 
 const authRouter = express.Router();
 authRouter.post("/signup", async (req, res) => {
@@ -18,6 +19,8 @@ authRouter.post("/signup", async (req, res) => {
     }
 
     const newUser = await User.create({ username, email, password });
+
+    const goal = await Goal.create({ userId: newUser._id });
     return res.status(201).json({
       message: "Signup successful !!",
       user: {
@@ -58,7 +61,7 @@ authRouter.post("/signin", async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(200).json({ message: "User login successfull !!" });
+    return res.status(200).json({ message: "User login successfull !!",token : token });
   } catch (error) {
     console.log("Error : ", error);
     return res.status(500).json({ message: "Error While Signin !!" });
@@ -79,7 +82,7 @@ authRouter.post("/logout", (req, res) => {
   });
 });
 
-authRouter.get("/me", userAuth,async (req, res) => {
+authRouter.get("/me", userAuth, async (req, res) => {
   return res.status(200).json({
     user: req.user,
   });

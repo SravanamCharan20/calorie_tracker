@@ -5,6 +5,8 @@ import { connectDB } from "./config/db.js";
 dotenv.config();
 import authRouter from "./routes/auth.route.js";
 import cookieParser from "cookie-parser";
+import goalRouter from "./routes/goal.route.js";
+import mealRouter from "./routes/meal.route.js";
 
 const app = express();
 const PORT = process.env.PORT || 6969;
@@ -18,6 +20,8 @@ app.use(
   }),
 );
 app.use('/auth',authRouter);
+app.use('/goals',goalRouter);
+app.use('/meals',mealRouter);
 
 
 try {
