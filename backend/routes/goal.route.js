@@ -6,14 +6,12 @@ const goalRouter = express.Router();
 
 goalRouter.get("/get", userAuth, async (req, res) => {
   try {
-    const goalData = await Goal.findOne({
+    let goalData = await Goal.findOne({
       userId: req.user._id,
     });
 
     if (!goalData) {
-      return res.status(404).json({
-        message: "Goal data not found",
-      });
+      goalData = await Goal.create({ userId: req.user._id });
     }
 
     return res.status(200).json({

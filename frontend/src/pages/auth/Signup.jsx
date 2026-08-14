@@ -43,7 +43,7 @@ const Signup = () => {
       }
 
       setSuccess(data.message);
-      navigate("/signin");
+      navigate("/signin", { replace: true });
     } catch (error) {
       console.log("Error", error);
       setError("Something went wrong. Please try again.");

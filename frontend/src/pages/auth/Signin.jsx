@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import AuthLayout, { AuthField } from "../../components/auth/AuthLayout";
-import { useAuth } from "../../context/AuthContext";
-
+import { useAuth } from "../../utils/AuthContext.jsx";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL ?? "http://localhost:6969";
 
@@ -13,7 +12,7 @@ const Signin = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
-  const {login} = useAuth();
+  const { refreshSession } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,9 +39,14 @@ const Signin = () => {
         return;
       }
 
-      login(data.user);
+      const isLoggedIn = await refreshSession();
 
-      navigate("/dashboard");
+      if (!isLoggedIn) {
+        setError("Signed in, but unable to load your session. Please try again.");
+        return;
+      }
+
+      navigate("/dashboard", { replace: true });
     } catch (error) {
       console.log("Error", error);
       setError("Something went wrong. Please try again.");

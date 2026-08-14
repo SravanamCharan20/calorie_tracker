@@ -25,8 +25,8 @@ const MacroStrip = () => (
 
 const FlameIcon = () => (
   <svg
-    width="28"
-    height="28"
+    width="16"
+    height="16"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -36,7 +36,6 @@ const FlameIcon = () => (
     aria-hidden="true"
   >
     <path d="M12 22c4-2 6-5 6-9 0-3-2-5-4-6 0 3-1.5 5-3 6-1-2-3-4-5-4-2 0-4 2-5 4-1.5-1-3-3-3-6-2 1-4 3-4 6 0 4 2 7 6 9z" />
-    <path d="M12 22c-1.5-2-2-3.5-2-5 0-2 1-3.5 2-4.5 1 1 2 2.5 2 4.5 0 1.5-.5 3-2 5z" />
   </svg>
 );
 
@@ -62,7 +61,7 @@ export const AuthField = ({
       placeholder={placeholder}
       autoComplete={autoComplete}
       required
-      className="w-full rounded-2xl border border-border bg-surface px-4 py-3.5 text-[15px] text-white placeholder:text-subtle outline-none transition-colors focus:border-border-focus focus:ring-1 focus:ring-white/10"
+      className="w-full rounded-xl border border-border bg-card-elevated px-4 py-3.5 text-sm text-white placeholder:text-subtle outline-none transition-colors focus:border-border-focus"
     />
   </div>
 );
@@ -75,49 +74,59 @@ const AuthLayout = ({
   footerLinkText,
   footerLinkTo,
 }) => (
-  <div className="flex min-h-screen flex-col bg-surface lg:flex-row">
-    <aside className="hidden flex-1 flex-col justify-between border-r border-border p-10 lg:flex xl:p-14">
-      <div className="flex items-center gap-3 text-white">
-        <FlameIcon />
-        <span className="text-lg font-semibold tracking-tight">Calorie Tracker</span>
+  <div className="flex min-h-screen bg-surface">
+    <aside className="hidden w-[272px] shrink-0 flex-col border-r border-border bg-card lg:flex">
+      <div className="px-5 pt-6 pb-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card-elevated text-white">
+            <FlameIcon />
+          </div>
+          <div>
+            <p className="text-[15px] font-semibold text-white">Calorie Tracker</p>
+            <p className="text-xs text-muted">Personal wellness</p>
+          </div>
+        </div>
       </div>
 
-      <div className="max-w-sm space-y-6">
-        <p className="text-[11px] font-medium tracking-[0.2em] text-muted uppercase">
+      <div className="flex flex-1 flex-col justify-center px-8 pb-12">
+        <p className="text-[11px] font-medium tracking-[0.16em] text-subtle uppercase">
           Track smarter
         </p>
-        <h2 className="text-3xl leading-snug font-bold tracking-tight text-white">
+        <h2 className="mt-3 text-2xl leading-snug font-bold tracking-tight text-white">
           Your daily nutrition, simplified.
         </h2>
-        <p className="text-[15px] leading-relaxed text-muted">
+        <p className="mt-3 text-sm leading-relaxed text-muted">
           Log meals, monitor macros, and stay on target with a clear view of
           your progress.
         </p>
-        <MacroStrip />
+        <div className="mt-6">
+          <MacroStrip />
+        </div>
       </div>
 
-      <p className="text-sm text-subtle">
+      <p className="px-8 pb-8 text-xs text-subtle">
         Built for consistency, not complexity.
       </p>
     </aside>
 
-    <main className="flex flex-1 items-center justify-center px-5 py-12 sm:px-8">
-      <div className="w-full max-w-[420px]">
+    <main className="flex flex-1 items-center justify-center px-5 py-10 sm:px-8">
+      <div className="w-full max-w-[400px]">
         <div className="mb-8 flex items-center gap-3 lg:hidden">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-card-elevated text-white">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card-elevated text-white">
             <FlameIcon />
           </div>
-          <span className="text-base font-semibold tracking-tight">
-            Calorie Tracker
-          </span>
+          <div>
+            <p className="text-[15px] font-semibold text-white">Calorie Tracker</p>
+            <p className="text-xs text-muted">Personal wellness</p>
+          </div>
         </div>
 
-        <div className="rounded-3xl border border-border bg-card p-8 sm:p-10">
-          <header className="mb-8 space-y-2">
+        <div className="rounded-2xl border border-border bg-card p-7 sm:p-8">
+          <header className="mb-7">
             <h1 className="text-2xl font-bold tracking-tight text-white">
               {title}
             </h1>
-            <p className="text-[15px] leading-relaxed text-muted">{subtitle}</p>
+            <p className="mt-1.5 text-sm leading-relaxed text-muted">{subtitle}</p>
           </header>
 
           {children}
@@ -128,7 +137,7 @@ const AuthLayout = ({
             {footerText}{" "}
             <Link
               to={footerLinkTo}
-              className="font-medium text-white underline-offset-4 transition-colors hover:underline"
+              className="font-medium text-white transition-colors hover:underline"
             >
               {footerLinkText}
             </Link>

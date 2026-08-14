@@ -1,12 +1,15 @@
 import { Outlet, Link, useLocation } from "react-router";
 
+const appPages = ["/dashboard", "/meals", "/goals"];
+
 function App() {
   const location = useLocation();
   const isAuthPage = ["/signin", "/signup"].includes(location.pathname);
+  const isAppPage = appPages.includes(location.pathname);
 
   return (
     <>
-      {!isAuthPage && (
+      {!isAuthPage && !isAppPage && (
         <nav className="border-b border-border bg-surface px-6 py-4">
           <div className="mx-auto flex max-w-6xl items-center gap-6">
             <Link

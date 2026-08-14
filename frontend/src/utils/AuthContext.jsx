@@ -18,14 +18,16 @@ export const AuthProvider = ({ children }) => {
 
       if (!response.ok) {
         setUser(null);
-        return;
+        return false;
       }
 
       const data = await response.json();
       setUser(data.user);
+      return true;
     } catch (error) {
       console.log("Auth check error:", error);
       setUser(null);
+      return false;
     } finally {
       setLoading(false);
     }
@@ -35,8 +37,10 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-  const login = (userData) => {
-    setUser(userData);
+  const refreshSession = async () => {
+    setLoading(true);
+    const isLoggedIn = await checkAuth();
+    return isLoggedIn;
   };
 
   const logout = async () => {
@@ -57,7 +61,7 @@ export const AuthProvider = ({ children }) => {
       value={{
         user,
         loading,
-        login,
+        refreshSession,
         logout,
         isAuthenticated: !!user,
       }}
