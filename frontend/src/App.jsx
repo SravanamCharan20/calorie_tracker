@@ -1,10 +1,17 @@
+import { Outlet, Link } from "react-router";
 
-const App = () => {
-    return (
-        <div>
-            
-        </div>
-    );
+function App() {
+  return (
+    <>
+      <nav>
+        <Link to="/dashboard">Dashboard</Link>
+        <Link to="/signin">Login</Link>
+        <Link to="/signup">Signup</Link>
+      </nav>
+
+      <Outlet />
+    </>
+  );
 }
 
 export default App;

@@ -20,11 +20,12 @@ app.use(
 app.use('/auth',authRouter);
 
 
-app.listen(PORT, async () => {
-  try {
-    await connectDB();
+try {
+  await connectDB();
+  app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-  } catch (e) {
-    console.log("Error while server connection", e);
-  }
-});
+  });
+} catch (error) {
+  console.log("Error while server connection", error);
+  process.exitCode = 1;
+}

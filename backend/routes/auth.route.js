@@ -2,13 +2,11 @@ import express from "express";
 import User from "../models/user.model.js";
 
 const authRouter = express.Router();
-const isProd = process.env.NODE_ENV === "production";
-
 authRouter.post("/signup", async (req, res) => {
   try {
     const { username, email, password } = req.body;
     if (!username || !email || !password) {
-      return res.json({ message: "All fields are required !!" });
+      return res.status(400).json({ message: "All fields are required !!" });
     }
 
     const user = await User.findOne({ email });
@@ -29,7 +27,7 @@ authRouter.post("/signup", async (req, res) => {
     });
   } catch (error) {
     console.log("Error : ", error);
-    return res.json({ message: "Error While Signup !!" });
+    return res.status(500).json({ message: "Error While Signup !!" });
   }
 });
 
@@ -37,7 +35,7 @@ authRouter.post("/signin", async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res.json({ message: "All fields are required !!" });
+      return res.status(400).json({ message: "All fields are required !!" });
     }
 
     const user = await User.findOne({ email });
@@ -49,8 +47,9 @@ authRouter.post("/signin", async (req, res) => {
     if (!isPasswordMatched) {
       return res.status(400).json({ message: "Wrong Credentails !!" });
     }
-    const token = user.createJWT();
+    const token = await user.createJWT();
 
+    const isProd = process.env.NODE_ENV === "production";
     res.cookie("token", token, {
       httpOnly: true,
       secure: isProd,
@@ -61,7 +60,7 @@ authRouter.post("/signin", async (req, res) => {
     return res.status(200).json({ message: "User login successfull !!" });
   } catch (error) {
     console.log("Error : ", error);
-    return res.json({ message: "Error While Signin !!" });
+    return res.status(500).json({ message: "Error While Signin !!" });
   }
 });
 
