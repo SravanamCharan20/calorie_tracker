@@ -8,6 +8,13 @@ const mealTypes = [
   { label: "Snack", value: "snacks" },
 ];
 
+const micronutrientFields = [
+  { key: "iron", label: "Iron", unit: "mg" },
+  { key: "calcium", label: "Calcium", unit: "mg" },
+  { key: "vitaminC", label: "Vitamin C", unit: "mg" },
+  { key: "vitaminD", label: "Vitamin D", unit: "IU" },
+];
+
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 
@@ -19,10 +26,16 @@ const emptyForm = {
   protein: "",
   carbs: "",
   fat: "",
+  iron: "",
+  calcium: "",
+  vitaminC: "",
+  vitaminD: "",
 };
 
 const getInitialForm = (meal) => {
   if (!meal) return emptyForm;
+
+  const micro = meal.micronutrients ?? {};
 
   return {
     mealType: meal.mealType,
@@ -32,6 +45,10 @@ const getInitialForm = (meal) => {
     protein: String(meal.protein),
     carbs: String(meal.carbs),
     fat: String(meal.fat),
+    iron: micro.iron != null ? String(micro.iron) : "",
+    calcium: micro.calcium != null ? String(micro.calcium) : "",
+    vitaminC: micro.vitaminC != null ? String(micro.vitaminC) : "",
+    vitaminD: micro.vitaminD != null ? String(micro.vitaminD) : "",
   };
 };
 
@@ -49,7 +66,6 @@ const validateImageFile = (file) => {
 
 const MealFormModal = ({ meal, onClose, onSave, isSaving }) => {
   const [form, setForm] = useState(() => getInitialForm(meal));
-  const [micronutrients, setMicronutrients] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isExtracting, setIsExtracting] = useState(false);
@@ -119,6 +135,7 @@ const MealFormModal = ({ meal, onClose, onSave, isSaving }) => {
 
       const response = await extractNutrition(selectedImage);
       const nutrition = response.nutrition;
+      const micro = nutrition.micronutrients ?? {};
 
       setForm((prev) => ({
         ...prev,
@@ -135,11 +152,13 @@ const MealFormModal = ({ meal, onClose, onSave, isSaving }) => {
           nutrition.protein != null ? String(nutrition.protein) : prev.protein,
         carbs: nutrition.carbs != null ? String(nutrition.carbs) : prev.carbs,
         fat: nutrition.fat != null ? String(nutrition.fat) : prev.fat,
+        iron: micro.iron != null ? String(micro.iron) : prev.iron,
+        calcium: micro.calcium != null ? String(micro.calcium) : prev.calcium,
+        vitaminC:
+          micro.vitaminC != null ? String(micro.vitaminC) : prev.vitaminC,
+        vitaminD:
+          micro.vitaminD != null ? String(micro.vitaminD) : prev.vitaminD,
       }));
-
-      if (nutrition.micronutrients) {
-        setMicronutrients(nutrition.micronutrients);
-      }
     } catch (error) {
       console.log("Extract nutrition error:", error);
       setExtractError(error.message);
@@ -151,7 +170,7 @@ const MealFormModal = ({ meal, onClose, onSave, isSaving }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const mealData = {
+    onSave({
       mealType: form.mealType,
       foodName: form.foodName,
       quantity: Number(form.quantity),
@@ -159,13 +178,13 @@ const MealFormModal = ({ meal, onClose, onSave, isSaving }) => {
       protein: Number(form.protein),
       carbs: Number(form.carbs),
       fat: Number(form.fat),
-    };
-
-    if (micronutrients) {
-      mealData.micronutrients = micronutrients;
-    }
-
-    onSave(mealData);
+      micronutrients: {
+        iron: Number(form.iron) || 0,
+        calcium: Number(form.calcium) || 0,
+        vitaminC: Number(form.vitaminC) || 0,
+        vitaminD: Number(form.vitaminD) || 0,
+      },
+    });
   };
 
   const isBusy = isSaving || isExtracting;
@@ -290,6 +309,7 @@ const MealFormModal = ({ meal, onClose, onSave, isSaving }) => {
               <input
                 type="number"
                 min="0"
+                step="any"
                 value={form.quantity}
                 onChange={handleChange("quantity")}
                 required
@@ -301,6 +321,7 @@ const MealFormModal = ({ meal, onClose, onSave, isSaving }) => {
               <input
                 type="number"
                 min="0"
+                step="any"
                 value={form.calories}
                 onChange={handleChange("calories")}
                 required
@@ -315,6 +336,7 @@ const MealFormModal = ({ meal, onClose, onSave, isSaving }) => {
               <input
                 type="number"
                 min="0"
+                step="any"
                 value={form.protein}
                 onChange={handleChange("protein")}
                 required
@@ -326,6 +348,7 @@ const MealFormModal = ({ meal, onClose, onSave, isSaving }) => {
               <input
                 type="number"
                 min="0"
+                step="any"
                 value={form.carbs}
                 onChange={handleChange("carbs")}
                 required
@@ -337,6 +360,7 @@ const MealFormModal = ({ meal, onClose, onSave, isSaving }) => {
               <input
                 type="number"
                 min="0"
+                step="any"
                 value={form.fat}
                 onChange={handleChange("fat")}
                 required
@@ -345,6 +369,30 @@ const MealFormModal = ({ meal, onClose, onSave, isSaving }) => {
               />
             </FormField>
           </div>
+
+          <section className="rounded-xl border border-border bg-card-elevated p-4">
+            <p className="text-sm font-medium text-white">Micronutrients</p>
+            <p className="mt-0.5 text-xs text-muted">
+              Optional vitamins and minerals for this meal
+            </p>
+
+            <div className="mt-4 grid grid-cols-2 gap-4">
+              {micronutrientFields.map(({ key, label, unit }) => (
+                <FormField key={key} label={`${label} (${unit})`}>
+                  <input
+                    type="number"
+                    min="0"
+                    step="any"
+                    value={form[key]}
+                    onChange={handleChange(key)}
+                    disabled={isBusy}
+                    placeholder="0"
+                    className="w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-white placeholder:text-subtle outline-none focus:border-border-focus disabled:opacity-50"
+                  />
+                </FormField>
+              ))}
+            </div>
+          </section>
 
           <div className="flex justify-end gap-3 pt-2">
             <button

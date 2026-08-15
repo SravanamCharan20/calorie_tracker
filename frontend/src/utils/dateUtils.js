@@ -24,3 +24,10 @@ export const getLocalDayOffset = (offsetDays = 0, referenceDate = new Date()) =>
   date.setHours(0, 0, 0, 0);
   return date;
 };
+
+export const parseLocalDateInput = (dateString) => {
+  const [year, month, day] = dateString.split("-").map(Number);
+  return new Date(year, month - 1, day);
+};
+
+export const toDateInputValue = (date = new Date()) => getLocalDateKey(date);

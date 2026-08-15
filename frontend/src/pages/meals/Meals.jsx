@@ -7,6 +7,11 @@ import {
   getMeals,
   updateMeal,
 } from "../../services/mealService.js";
+import {
+  getEndOfLocalDay,
+  getStartOfLocalDay,
+  parseLocalDateInput,
+} from "../../utils/dateUtils.js";
 import DashboardLayout from "../../components/dashboard/DashboardLayout.jsx";
 import Header from "../../components/dashboard/Header.jsx";
 import MealFilters from "../../components/meals/MealFilters.jsx";
@@ -21,6 +26,8 @@ const Meals = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [activeFilter, setActiveFilter] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -33,10 +40,30 @@ const Meals = () => {
       setLoading(true);
       setError("");
 
+      if (startDate && endDate && startDate > endDate) {
+        setError("Start date must be on or before end date.");
+        setMeals([]);
+        setTotalPages(1);
+        setTotal(0);
+        return;
+      }
+
       const params = { page, limit: 10 };
 
       if (activeFilter) {
         params.mealType = activeFilter;
+      }
+
+      if (startDate) {
+        params.startDate = getStartOfLocalDay(
+          parseLocalDateInput(startDate),
+        ).toISOString();
+      }
+
+      if (endDate) {
+        params.endDate = getEndOfLocalDay(
+          parseLocalDateInput(endDate),
+        ).toISOString();
       }
 
       const response = await getMeals(params);
@@ -50,7 +77,7 @@ const Meals = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, activeFilter]);
+  }, [page, activeFilter, startDate, endDate]);
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -68,6 +95,22 @@ const Meals = () => {
 
   const handleFilterChange = (value) => {
     setActiveFilter(value);
+    setPage(1);
+  };
+
+  const handleStartDateChange = (value) => {
+    setStartDate(value);
+    setPage(1);
+  };
+
+  const handleEndDateChange = (value) => {
+    setEndDate(value);
+    setPage(1);
+  };
+
+  const handleClearDates = () => {
+    setStartDate("");
+    setEndDate("");
     setPage(1);
   };
 
@@ -140,6 +183,11 @@ const Meals = () => {
           onFilterChange={handleFilterChange}
           search={search}
           onSearchChange={setSearch}
+          startDate={startDate}
+          endDate={endDate}
+          onStartDateChange={handleStartDateChange}
+          onEndDateChange={handleEndDateChange}
+          onClearDates={handleClearDates}
         />
       </div>
 
@@ -169,10 +217,11 @@ const Meals = () => {
         />
       )}
 
-      {!loading && (
+      {!loading && !error && (
         <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-muted">
             Showing {filteredMeals.length} of {total} meals
+            {(startDate || endDate || activeFilter) && " in selected range"}
           </p>
 
           <div className="flex items-center gap-2">
