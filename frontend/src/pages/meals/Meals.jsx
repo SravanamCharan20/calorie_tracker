@@ -64,7 +64,7 @@ const Meals = () => {
 
       const params = {
         page,
-        limit: 10,
+        limit: 5,
         search: debouncedSearch,
       };
 

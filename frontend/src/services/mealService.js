@@ -27,7 +27,7 @@ export const getMeals = async (params = {}) => {
   }
 
   query.append("page", String(params.page ?? 1));
-  query.append("limit", String(params.limit ?? 10));
+  query.append("limit", String(params.limit ?? 5));
 
   const queryString = query.toString();
 
