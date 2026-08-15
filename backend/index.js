@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import goalRouter from "./routes/goal.route.js";
 import mealRouter from "./routes/meal.route.js";
 import aiRouter from "./routes/ai.route.js";
+import chatRouter from "./routes/chat.route.js";
 
 const app = express();
 const PORT = process.env.PORT || 6969;
@@ -24,6 +25,7 @@ app.use('/auth',authRouter);
 app.use('/goals',goalRouter);
 app.use('/meals',mealRouter);
 app.use('/ai',aiRouter);
+app.use('/chat',chatRouter);
 
 
 try {

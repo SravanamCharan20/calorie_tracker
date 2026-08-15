@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Sidebar from "./Sidebar";
 
-const DashboardLayout = ({ children }) => {
+const DashboardLayout = ({ children, chatMode = false }) => {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   return (
@@ -20,8 +20,12 @@ const DashboardLayout = ({ children }) => {
         />
       )}
 
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto">
-        <div className="lg:hidden">
+      <div
+        className={`flex min-h-0 min-w-0 flex-1 flex-col ${
+          chatMode ? "overflow-hidden" : "overflow-y-auto"
+        }`}
+      >
+        <div className="shrink-0 lg:hidden">
           <div className="flex items-center justify-between border-b border-border px-4 py-3">
             <button
               type="button"
@@ -31,13 +35,29 @@ const DashboardLayout = ({ children }) => {
             >
               <MenuIcon />
             </button>
-            <span className="text-sm font-semibold text-white">Calorie Tracker</span>
+            <span className="text-sm font-semibold text-white">
+              Calorie Tracker
+            </span>
             <div className="w-9" />
           </div>
         </div>
 
-        <main className="flex-1 px-5 py-6 sm:px-8 sm:py-8 lg:px-10">
-          <div className="mx-auto max-w-[1200px]">{children}</div>
+        <main
+          className={`min-h-0 flex-1 ${
+            chatMode
+              ? "flex flex-col overflow-hidden px-4 py-3 sm:px-6 sm:py-4"
+              : "px-5 py-6 sm:px-8 sm:py-8 lg:px-10"
+          }`}
+        >
+          <div
+            className={`mx-auto w-full ${
+              chatMode
+                ? "flex h-full min-h-0 max-w-[920px] flex-1 flex-col"
+                : "max-w-[1200px]"
+            }`}
+          >
+            {children}
+          </div>
         </main>
       </div>
     </div>

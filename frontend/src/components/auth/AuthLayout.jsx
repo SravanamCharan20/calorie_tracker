@@ -1,28 +1,5 @@
 import { Link } from "react-router";
 
-const MacroStrip = () => (
-  <div className="flex items-center gap-3" aria-hidden="true">
-    <span className="flex items-center gap-1.5">
-      <span className="h-1.5 w-1.5 rounded-full bg-protein" />
-      <span className="text-[11px] font-medium tracking-wide text-muted uppercase">
-        Protein
-      </span>
-    </span>
-    <span className="flex items-center gap-1.5">
-      <span className="h-1.5 w-1.5 rounded-full bg-carbs" />
-      <span className="text-[11px] font-medium tracking-wide text-muted uppercase">
-        Carbs
-      </span>
-    </span>
-    <span className="flex items-center gap-1.5">
-      <span className="h-1.5 w-1.5 rounded-full bg-fat" />
-      <span className="text-[11px] font-medium tracking-wide text-muted uppercase">
-        Fat
-      </span>
-    </span>
-  </div>
-);
-
 const FlameIcon = () => (
   <svg
     width="16"
@@ -74,77 +51,43 @@ const AuthLayout = ({
   footerLinkText,
   footerLinkTo,
 }) => (
-  <div className="flex min-h-screen bg-surface">
-    <aside className="hidden w-[272px] shrink-0 flex-col border-r border-border bg-card lg:flex">
-      <div className="px-5 pt-6 pb-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card-elevated text-white">
-            <FlameIcon />
-          </div>
-          <div>
-            <p className="text-[15px] font-semibold text-white">Calorie Tracker</p>
-            <p className="text-xs text-muted">Personal wellness</p>
-          </div>
+  <div className="flex min-h-screen items-center justify-center bg-surface px-5 py-10 sm:px-8">
+    <div className="w-full max-w-[420px]">
+      <div className="mb-8 flex flex-col items-center text-center">
+        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-white">
+          <FlameIcon />
         </div>
+        <p className="mt-4 text-[15px] font-semibold text-white">
+          Calorie Tracker
+        </p>
+        <p className="mt-1 text-xs text-muted">Personal wellness</p>
       </div>
 
-      <div className="flex flex-1 flex-col justify-center px-8 pb-12">
-        <p className="text-[11px] font-medium tracking-[0.16em] text-subtle uppercase">
-          Track smarter
-        </p>
-        <h2 className="mt-3 text-2xl leading-snug font-bold tracking-tight text-white">
-          Your daily nutrition, simplified.
-        </h2>
-        <p className="mt-3 text-sm leading-relaxed text-muted">
-          Log meals, monitor macros, and stay on target with a clear view of
-          your progress.
-        </p>
-        <div className="mt-6">
-          <MacroStrip />
-        </div>
-      </div>
-
-      <p className="px-8 pb-8 text-xs text-subtle">
-        Built for consistency, not complexity.
-      </p>
-    </aside>
-
-    <main className="flex flex-1 items-center justify-center px-5 py-10 sm:px-8">
-      <div className="w-full max-w-[400px]">
-        <div className="mb-8 flex items-center gap-3 lg:hidden">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card-elevated text-white">
-            <FlameIcon />
-          </div>
-          <div>
-            <p className="text-[15px] font-semibold text-white">Calorie Tracker</p>
-            <p className="text-xs text-muted">Personal wellness</p>
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-border bg-card p-7 sm:p-8">
-          <header className="mb-7">
-            <h1 className="text-2xl font-bold tracking-tight text-white">
-              {title}
-            </h1>
-            <p className="mt-1.5 text-sm leading-relaxed text-muted">{subtitle}</p>
-          </header>
-
-          {children}
-        </div>
-
-        {footerText && footerLinkText && footerLinkTo && (
-          <p className="mt-6 text-center text-sm text-muted">
-            {footerText}{" "}
-            <Link
-              to={footerLinkTo}
-              className="font-medium text-white transition-colors hover:underline"
-            >
-              {footerLinkText}
-            </Link>
+      <div className="rounded-2xl border border-border bg-card p-7 shadow-sm sm:p-8">
+        <header className="mb-7 text-center">
+          <h1 className="text-2xl font-bold tracking-tight text-white">
+            {title}
+          </h1>
+          <p className="mt-1.5 text-sm leading-relaxed text-muted">
+            {subtitle}
           </p>
-        )}
+        </header>
+
+        {children}
       </div>
-    </main>
+
+      {footerText && footerLinkText && footerLinkTo && (
+        <p className="mt-6 text-center text-sm text-muted">
+          {footerText}{" "}
+          <Link
+            to={footerLinkTo}
+            className="font-medium text-white transition-colors hover:underline"
+          >
+            {footerLinkText}
+          </Link>
+        </p>
+      )}
+    </div>
   </div>
 );
 

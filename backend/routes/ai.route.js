@@ -1,7 +1,7 @@
 import express from "express";
 import userAuth from "../middlewares/auth.middleware.js";
 import upload from "../middlewares/upload.middleware.js";
-import gemini from "../config/geminiConfig.js";
+import {gemini} from "../config/geminiConfig.js";
 
 const aiRouter = express.Router();
 

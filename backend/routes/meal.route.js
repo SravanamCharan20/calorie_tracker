@@ -1,6 +1,7 @@
 import express from "express";
 import Meal from "../models/meal.model.js";
 import userAuth from "../middlewares/auth.middleware.js";
+import createMeal from "../config/tools/mealTool.js";
 
 const mealRouter = express.Router();
 
@@ -18,21 +19,7 @@ mealRouter.post("/create", userAuth, async (req, res) => {
       consumedAt,
     } = req.body;
 
-    if (
-      !mealType ||
-      !foodName ||
-      quantity == null ||
-      calories == null ||
-      protein == null ||
-      carbs == null ||
-      fat == null
-    ) {
-      return res.status(400).json({
-        message: "All meal fields are required",
-      });
-    }
-
-    const meal = await Meal.create({
+    const meal = await createMeal({
       userId: req.user._id,
       mealType,
       foodName,

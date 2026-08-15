@@ -12,6 +12,7 @@ import Signin from "./pages/auth/Signin.jsx";
 import Dashboard from "./pages/dashboard/Dashboard.jsx";
 import Meals from "./pages/meals/Meals.jsx";
 import Goals from "./pages/goals/Goals.jsx";
+import Chat from "./pages/chat/Chat.jsx";
 
 const router = createBrowserRouter([
   {
@@ -59,6 +60,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Goals />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/chat",
+        element: (
+          <ProtectedRoute>
+            <Chat />
           </ProtectedRoute>
         ),
       },
