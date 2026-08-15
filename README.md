@@ -30,7 +30,7 @@ Each user has their own account and data. After signing in, you can manage meals
 - Track calories, protein, carbs, fat, and micronutrients
 - Filter by meal type and date range
 - Search by food name
-- Paginated meal list (10 meals per page)
+- Paginated meal list (5 meals per page)
 - Bulk import from PDF
 - AI image extraction when adding a meal (upload a food photo or label to pre-fill nutrition fields)
 
@@ -132,7 +132,7 @@ This tells the frontend where the backend API is running.
 ### 1. Clone the repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/SravanamCharan20/calorie_tracker
 cd Calorie_tracker
 ```
 
