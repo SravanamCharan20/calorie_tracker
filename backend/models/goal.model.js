@@ -1,4 +1,3 @@
-// daily calorie target,protein/carb/fat targets, weight goal
 import mongoose from "mongoose";
 
 const goalSchema = new mongoose.Schema(
@@ -6,38 +5,38 @@ const goalSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: [true, "User is required"],
       unique: true,
     },
     dailyCalorieTarget: {
       type: Number,
-      required: true,
+      required: [true, "Daily calorie target is required"],
       default: 2200,
-      min: 0,
+      min: [0, "Daily calorie target must be a non-negative number"],
     },
     proteinTarget: {
       type: Number,
-      required: true,
+      required: [true, "Protein target is required"],
       default: 150,
-      min: 0,
+      min: [0, "Protein target must be a non-negative number"],
     },
     carbTarget: {
       type: Number,
-      required: true,
+      required: [true, "Carb target is required"],
       default: 250,
-      min: 0,
+      min: [0, "Carb target must be a non-negative number"],
     },
     fatTarget: {
       type: Number,
-      required: true,
+      required: [true, "Fat target is required"],
       default: 70,
-      min: 0,
+      min: [0, "Fat target must be a non-negative number"],
     },
     weightGoal: {
       type: Number,
-      required: true,
+      required: [true, "Weight goal is required"],
       default: 65,
-      min: 0,
+      min: [0, "Weight goal must be a non-negative number"],
     },
   },
   { timestamps: true },

@@ -56,6 +56,30 @@ const createMeal = async ({
     fields[field] = num;
   }
 
+  const microFields = {
+    iron: micronutrients.iron,
+    calcium: micronutrients.calcium,
+    vitaminC: micronutrients.vitaminC,
+    vitaminD: micronutrients.vitaminD,
+  };
+
+  const parsedMicronutrients = {};
+
+  for (const [field, value] of Object.entries(microFields)) {
+    if (value == null || value === "") {
+      parsedMicronutrients[field] = 0;
+      continue;
+    }
+
+    const num = toNumber(value);
+
+    if (!Number.isFinite(num) || num < 0) {
+      throw new Error(`${field} must be a valid non-negative number`);
+    }
+
+    parsedMicronutrients[field] = num;
+  }
+
   return Meal.create({
     userId,
     mealType: type,
@@ -65,12 +89,7 @@ const createMeal = async ({
     protein: fields.protein,
     carbs: fields.carbs,
     fat: fields.fat,
-    micronutrients: {
-      iron: toNumber(micronutrients.iron) || 0,
-      calcium: toNumber(micronutrients.calcium) || 0,
-      vitaminC: toNumber(micronutrients.vitaminC) || 0,
-      vitaminD: toNumber(micronutrients.vitaminD) || 0,
-    },
+    micronutrients: parsedMicronutrients,
     consumedAt: consumedAt || undefined,
   });
 };
