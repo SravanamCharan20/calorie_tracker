@@ -19,6 +19,8 @@ import MealsTable from "../../components/meals/MealsTable.jsx";
 import MealFormModal from "../../components/meals/MealFormModal.jsx";
 import BulkImportModal from "../../components/meals/BulkImportModal.jsx";
 
+const MEALS_PAGE_SIZE = 5;
+
 const Meals = () => {
   const { isAuthenticated } = useAuth();
 
@@ -64,7 +66,7 @@ const Meals = () => {
 
       const params = {
         page,
-        limit: 5,
+        limit: MEALS_PAGE_SIZE,
         search: debouncedSearch,
       };
 
@@ -139,7 +141,7 @@ const Meals = () => {
     setPage(1);
   };
 
-  const pageSize = 10;
+  const pageSize = MEALS_PAGE_SIZE;
   const rangeStart = total === 0 ? 0 : (page - 1) * pageSize + 1;
   const rangeEnd = Math.min(page * pageSize, total);
 

@@ -89,7 +89,7 @@ authRouter.post("/signin", async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(200).json({ message: "User login successfull !!" });
+    return res.status(200).json({ message: "User login successful !!" });
   } catch (error) {
     return handleRouteError(res, error, "Error While Signin !!");
   }
