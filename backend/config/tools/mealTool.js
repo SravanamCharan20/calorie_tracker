@@ -1,7 +1,9 @@
 import Meal from "../../models/meal.model.js";
 
+// Single place to create meals — used by REST API, chat tools, and PDF import.
 const mealTypes = ["breakfast", "lunch", "dinner", "snacks"];
 
+// Strips text like "100g" or "1 serving" down to a number when possible.
 const toNumber = (value) => {
   if (typeof value === "number") {
     return value;

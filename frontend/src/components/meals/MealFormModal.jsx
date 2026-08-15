@@ -242,6 +242,7 @@ const MealFormModal = ({ meal, onClose, onSave, isSaving, saveError }) => {
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           {!isEditing && (
+            // AI scan is only for new meals — editing keeps the existing values as-is.
             <section className="rounded-xl border border-border bg-card-elevated p-4">
               <div className="flex items-center justify-between gap-3">
                 <div>

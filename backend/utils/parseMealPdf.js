@@ -1,7 +1,11 @@
 import { PDFParse } from "pdf-parse";
 
+// Parses exported food diary PDFs into meal objects.
+// Supports pipe, comma, tab, or space-separated tables with flexible column names.
+
 const MEAL_TYPES = new Set(["breakfast", "lunch", "dinner", "snacks"]);
 
+// Maps common header labels (from different PDF exports) to our meal fields.
 const COLUMN_ALIASES = {
   mealType: ["meal type", "mealtype", "type", "meal"],
   foodName: ["food name", "food", "item", "name", "food item"],
@@ -21,6 +25,7 @@ const normalizeHeader = (value) =>
   value.toLowerCase().replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
 
 const splitRow = (line) => {
+  // Try the most common separators found in exported diary PDFs.
   if (line.includes("\t")) {
     return line.split("\t").map((cell) => cell.trim());
   }
@@ -206,6 +211,7 @@ export const parseMealPdfText = (text) => {
     );
   }
 
+  // First row with recognizable column names tells us where each value lives.
   const columnMap = buildColumnMap(splitRow(lines[headerIndex]));
 
   if (

@@ -65,6 +65,7 @@ export const calculateWeeklyCalories = (meals) => {
   const today = new Date();
   const weeklyCalories = [];
 
+  // Build the last 7 days using local dates so the chart matches what the user sees.
   for (let i = 6; i >= 0; i--) {
     const date = getLocalDayOffset(-i, today);
     const dateKey = getLocalDateKey(date);

@@ -12,6 +12,7 @@ goalRouter.get("/get", userAuth, async (req, res) => {
     });
 
     if (!goalData) {
+      // Safety net — older accounts or edge cases where signup goal creation was missed.
       goalData = await Goal.create({ userId: req.user._id });
     }
 

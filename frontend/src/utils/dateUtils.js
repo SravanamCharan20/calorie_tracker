@@ -1,3 +1,6 @@
+// Date helpers for the user's local timezone.
+// We avoid toISOString().split("T")[0] because that uses UTC and can show the wrong day.
+
 export const getLocalDateKey = (date = new Date()) => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -25,6 +28,7 @@ export const getLocalDayOffset = (offsetDays = 0, referenceDate = new Date()) =>
   return date;
 };
 
+// Turns an <input type="date"> value (YYYY-MM-DD) into a local Date object.
 export const parseLocalDateInput = (dateString) => {
   const [year, month, day] = dateString.split("-").map(Number);
   return new Date(year, month - 1, day);

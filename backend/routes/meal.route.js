@@ -11,6 +11,7 @@ import { handleRouteError } from "../utils/handleRouteError.js";
 
 const mealRouter = express.Router();
 
+// Shared meal creation logic lives in mealTool.js so routes, chat, and PDF import all use the same rules.
 mealRouter.post("/create", userAuth, async (req, res) => {
   try {
     const {
@@ -54,6 +55,7 @@ mealRouter.post("/create", userAuth, async (req, res) => {
 mealRouter.post(
   "/import/pdf",
   userAuth,
+  // Wrap multer so upload errors (wrong file type, too large) return JSON instead of crashing.
   (req, res, next) => {
     pdfUpload.single("pdf")(req, res, (uploadError) => {
       if (uploadError) {
@@ -79,6 +81,7 @@ mealRouter.post(
       const importedMeals = [];
       const importErrors = [...skippedRows];
 
+      // Import row by row — one bad row should not cancel the whole upload.
       for (const mealData of meals) {
         try {
           const meal = await createMeal({
@@ -160,7 +163,7 @@ mealRouter.get("/get", userAuth, async (req, res) => {
     }
 
     const filter = {
-      userId: req.user._id,
+      userId: req.user._id, // Each user only sees their own meals.
     };
 
     if (mealType) {
@@ -201,6 +204,7 @@ mealRouter.get("/get", userAuth, async (req, res) => {
     const total = await Meal.countDocuments(filter);
     const totalPages = total === 0 ? 1 : Math.ceil(total / pageLimit);
 
+    // Newest meals first; skip/limit handles pagination on the server.
     const meals = await Meal.find(filter)
       .sort({ consumedAt: -1 })
       .skip(pageSkip)

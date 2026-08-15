@@ -41,6 +41,7 @@ const Meals = () => {
   const [isImporting, setIsImporting] = useState(false);
 
   useEffect(() => {
+    // Wait 300ms after typing before searching so we don't hit the API on every keystroke.
     const timeoutId = window.setTimeout(() => {
       setDebouncedSearch(search.trim());
     }, 300);
@@ -72,6 +73,7 @@ const Meals = () => {
       }
 
       if (startDate) {
+        // Convert the date picker value to local day boundaries before sending ISO strings to the API.
         params.startDate = getStartOfLocalDay(
           parseLocalDateInput(startDate),
         ).toISOString();
@@ -91,6 +93,7 @@ const Meals = () => {
       setTotalPages(safeTotalPages);
       setTotal(response.total ?? 0);
 
+      // If filters removed pages (e.g. user was on page 3 but only 1 page left), step back.
       if (currentPage !== page) {
         setPage(currentPage);
       }
@@ -109,7 +112,7 @@ const Meals = () => {
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedSearch]);
+  }, [debouncedSearch]); // New search should always start from page 1.
 
   const handleSearchChange = (value) => {
     setSearch(value);

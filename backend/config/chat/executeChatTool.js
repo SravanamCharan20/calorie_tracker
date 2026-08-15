@@ -2,6 +2,7 @@ import createMeal from "../tools/mealTool.js";
 import getGoal from "../tools/goalTool.js";
 import getWeeklyMeals from "../tools/weeklyMealsTool.js";
 
+// Mongoose documents don't serialize cleanly for Gemini — convert to plain JSON first.
 const serializeData = (data) => JSON.parse(JSON.stringify(data));
 
 const toolHandlers = {
@@ -34,6 +35,7 @@ export const executeChatTool = async (toolCall, userId) => {
 
     return await handler(userId, toolCall.arguments ?? {});
   } catch (toolError) {
+    // Return a structured failure so Gemini can tell the user what went wrong.
     return {
       success: false,
       error: toolError.message,

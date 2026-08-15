@@ -1,5 +1,6 @@
 export const CHAT_MODEL = "gemini-3.6-flash";
 
+// Instructions for the chat assistant — covers when to use tools vs answer directly.
 export const SYSTEM_PROMPT = `
 You are a nutrition assistant for a calorie tracking application.
 

@@ -5,6 +5,7 @@ import { gemini } from "../config/geminiConfig.js";
 
 const aiRouter = express.Router();
 
+// JSON schema sent to Gemini so the response always matches our meal form fields.
 const nutritionSchema = {
   type: "object",
   properties: {
@@ -69,6 +70,7 @@ const nutritionSchema = {
 aiRouter.post(
   "/extract",
   userAuth,
+  // Catch multer errors (wrong file type, file too large) before hitting Gemini.
   (req, res, next) => {
     upload.single("image")(req, res, (uploadError) => {
       if (uploadError) {

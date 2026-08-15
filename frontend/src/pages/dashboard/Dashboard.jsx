@@ -50,6 +50,7 @@ const Dashboard = () => {
       const endOfToday = getEndOfLocalDay();
       const startOfWeek = getLocalDayOffset(-6);
 
+      // Fetch goal, today's meals, and the last 7 days in parallel for a faster dashboard load.
       const [goalResponse, todayMealsResponse, weeklyMealsResponse] =
         await Promise.all([
           getGoal(),

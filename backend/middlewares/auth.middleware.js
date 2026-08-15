@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 
+// Protects routes by checking the JWT stored in an HTTP-only cookie.
+// If valid, the logged-in user is attached to req.user for downstream handlers.
 const userAuth = async (req, res, next) => {
   try {
     const token = req.cookies.token;

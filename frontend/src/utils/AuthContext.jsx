@@ -6,6 +6,7 @@ const AuthContext = createContext();
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
+// Shares login state across the app. On load, we check /auth/me using the cookie.
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -13,7 +14,7 @@ export const AuthProvider = ({ children }) => {
   const checkAuth = async () => {
     try {
       const response = await fetch(`${BASE_URL}/auth/me`, {
-        credentials: "include",
+        credentials: "include", // Sends the HTTP-only auth cookie with the request.
       });
 
       if (!response.ok) {

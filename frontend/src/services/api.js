@@ -1,9 +1,11 @@
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
+// Shared fetch wrapper for all API calls. Sends cookies automatically for auth.
 const api = async (endpoint, options = {}) => {
   const isFormData = options.body instanceof FormData;
 
   const headers = {
+    // Let the browser set Content-Type for file uploads (needs the boundary string).
     ...(isFormData ? {} : { "Content-Type": "application/json" }),
     ...options.headers,
   };

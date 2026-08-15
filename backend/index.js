@@ -15,6 +15,7 @@ const PORT = process.env.PORT || 6969;
 
 app.use(express.json());
 app.use(cookieParser());
+// credentials: true lets the browser send auth cookies from the React app.
 app.use(
   cors({
     origin: "http://localhost:5173",

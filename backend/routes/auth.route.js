@@ -41,6 +41,7 @@ authRouter.post("/signup", async (req, res) => {
       password,
     });
 
+    // Every new user gets default nutrition targets so the dashboard works immediately.
     await Goal.create({ userId: newUser._id });
 
     return res.status(201).json({
@@ -72,6 +73,7 @@ authRouter.post("/signin", async (req, res) => {
     const isPasswordMatched =
       user && (await user.checkPass(password));
 
+    // Same message for wrong email or password so we don't reveal which one failed.
     if (!isPasswordMatched) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
@@ -79,6 +81,7 @@ authRouter.post("/signin", async (req, res) => {
     const token = await user.createJWT();
 
     const isProd = process.env.NODE_ENV === "production";
+    // Token lives in a cookie (not localStorage) so JavaScript on the page can't read it.
     res.cookie("token", token, {
       httpOnly: true,
       secure: isProd,

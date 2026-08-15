@@ -13,6 +13,9 @@ import {
 
 const chatRouter = express.Router();
 
+// Chat runs in two steps when a tool is needed:
+// 1) Gemini decides which tool to call
+// 2) We run the tool, send results back, and Gemini writes the final reply
 chatRouter.post("/", userAuth, async (req, res) => {
   try {
     const { message } = req.body;
@@ -37,6 +40,7 @@ chatRouter.post("/", userAuth, async (req, res) => {
     const functionCalls =
       interaction.steps?.filter((step) => step.type === "function_call") ?? [];
 
+    // No tool needed — Gemini answered directly (e.g. a general nutrition question).
     if (functionCalls.length === 0) {
       return res.status(200).json({
         message: "Chat response generated successfully",
@@ -53,7 +57,7 @@ chatRouter.post("/", userAuth, async (req, res) => {
 
     const finalInteraction = await geminiChat.interactions.create({
       model: CHAT_MODEL,
-      previous_interaction_id: interaction.id,
+      previous_interaction_id: interaction.id, // Links this turn to the tool call above.
       input: functionResults,
       tools: chatTools,
     });

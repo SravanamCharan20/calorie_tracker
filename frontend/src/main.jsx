@@ -14,6 +14,7 @@ import Meals from "./pages/meals/Meals.jsx";
 import Goals from "./pages/goals/Goals.jsx";
 import Chat from "./pages/chat/Chat.jsx";
 
+// ProtectedRoute = must be logged in. GuestRoute = sign-in/sign-up only when logged out.
 const router = createBrowserRouter([
   {
     path: "/",

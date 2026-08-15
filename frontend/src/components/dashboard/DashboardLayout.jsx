@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Sidebar from "./Sidebar";
 
+// Shared shell for all logged-in pages. chatMode keeps the chat panel full-height without page scroll.
 const DashboardLayout = ({ children, chatMode = false }) => {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
