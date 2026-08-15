@@ -1,8 +1,6 @@
 # Calorie Tracker
 
-<a href="https://youtu.be/7BRMnd3B2AQ">
-  <img src="https://img.youtube.com/vi/7BRMnd3B2AQ/maxresdefault.jpg" alt="Calorie Tracker Demo Video" width="100%" />
-</a>
+[![Calorie Tracker Demo Video](./assets/demo-thumbnail.jpg)](https://youtu.be/7BRMnd3B2AQ)
 
 A full-stack personal nutrition app that helps you log meals, track daily and weekly intake, set goals, and get AI-powered help with food logging and nutrition questions.
 
