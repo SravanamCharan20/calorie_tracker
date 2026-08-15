@@ -22,6 +22,32 @@ const emptyForm = {
   weightGoal: "",
 };
 
+const goalFieldLabels = {
+  dailyCalorieTarget: "Daily calories",
+  proteinTarget: "Protein",
+  carbTarget: "Carbohydrates",
+  fatTarget: "Fat",
+  weightGoal: "Weight goal",
+};
+
+const validateGoalForm = (form) => {
+  for (const [key, label] of Object.entries(goalFieldLabels)) {
+    const rawValue = form[key].trim();
+
+    if (rawValue === "") {
+      return `${label} is required.`;
+    }
+
+    const value = Number(rawValue);
+
+    if (!Number.isFinite(value) || value < 0) {
+      return `${label} must be a valid non-negative number.`;
+    }
+  }
+
+  return null;
+};
+
 const Goals = () => {
   const { isAuthenticated } = useAuth();
 
@@ -73,6 +99,14 @@ const Goals = () => {
     e.preventDefault();
     setError("");
     setSuccess("");
+
+    const validationError = validateGoalForm(form);
+
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setIsSaving(true);
 
     try {

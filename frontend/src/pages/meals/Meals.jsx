@@ -35,6 +35,7 @@ const Meals = () => {
   const [error, setError] = useState("");
   const [modalMeal, setModalMeal] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [modalSaveError, setModalSaveError] = useState("");
   const [showBulkImport, setShowBulkImport] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
@@ -148,11 +149,13 @@ const Meals = () => {
 
   const handleAddMeal = () => {
     setModalMeal(null);
+    setModalSaveError("");
     setShowModal(true);
   };
 
   const handleEditMeal = (meal) => {
     setModalMeal(meal);
+    setModalSaveError("");
     setShowModal(true);
   };
 
@@ -171,6 +174,7 @@ const Meals = () => {
   const handleSaveMeal = async (mealData) => {
     try {
       setIsSaving(true);
+      setModalSaveError("");
 
       if (modalMeal) {
         await updateMeal(modalMeal._id, mealData);
@@ -180,10 +184,11 @@ const Meals = () => {
 
       setShowModal(false);
       setModalMeal(null);
+      setModalSaveError("");
       fetchMeals();
     } catch (saveError) {
       console.log("Save error:", saveError);
-      setError(saveError.message);
+      setModalSaveError(saveError.message);
     } finally {
       setIsSaving(false);
     }
@@ -330,9 +335,11 @@ const Meals = () => {
           onClose={() => {
             setShowModal(false);
             setModalMeal(null);
+            setModalSaveError("");
           }}
           onSave={handleSaveMeal}
           isSaving={isSaving}
+          saveError={modalSaveError}
         />
       )}
     </DashboardLayout>

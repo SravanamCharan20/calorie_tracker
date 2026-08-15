@@ -1,5 +1,15 @@
 import Meal from "../../models/meal.model.js";
 
+const mealTypes = ["breakfast", "lunch", "dinner", "snacks"];
+
+const toNumber = (value) => {
+  if (typeof value === "number") {
+    return value;
+  }
+
+  return Number(String(value).replace(/[^\d.-]/g, ""));
+};
+
 const createMeal = async ({
   userId,
   mealType,
@@ -9,35 +19,58 @@ const createMeal = async ({
   protein,
   carbs,
   fat,
-  micronutrients,
+  micronutrients = {},
   consumedAt,
 }) => {
-  if (
-    !mealType ||
-    !foodName ||
-    quantity == null ||
-    calories == null ||
-    protein == null ||
-    carbs == null ||
-    fat == null
-  ) {
-    throw new Error("All meal fields are required");
+  if (!userId) {
+    throw new Error("User is required");
   }
 
-  const meal = await Meal.create({
-    userId,
-    mealType,
-    foodName,
-    quantity,
-    calories,
-    protein,
-    carbs,
-    fat,
-    micronutrients,
-    consumedAt,
-  });
+  const name = String(foodName ?? "").trim();
 
-  return meal;
+  if (!name) {
+    throw new Error("Food name is required");
+  }
+
+  const type = String(mealType ?? "").toLowerCase().trim();
+
+  if (!mealTypes.includes(type)) {
+    throw new Error("Meal type must be breakfast, lunch, dinner, or snacks");
+  }
+
+  const fields = { quantity, calories, protein, carbs, fat };
+
+  for (const [field, value] of Object.entries(fields)) {
+    if (value == null || value === "") {
+      throw new Error(`${field} is required`);
+    }
+
+    const num = toNumber(value);
+
+    if (!Number.isFinite(num) || num < 0) {
+      throw new Error(`${field} must be a valid number`);
+    }
+
+    fields[field] = num;
+  }
+
+  return Meal.create({
+    userId,
+    mealType: type,
+    foodName: name,
+    quantity: fields.quantity,
+    calories: fields.calories,
+    protein: fields.protein,
+    carbs: fields.carbs,
+    fat: fields.fat,
+    micronutrients: {
+      iron: toNumber(micronutrients.iron) || 0,
+      calcium: toNumber(micronutrients.calcium) || 0,
+      vitaminC: toNumber(micronutrients.vitaminC) || 0,
+      vitaminD: toNumber(micronutrients.vitaminD) || 0,
+    },
+    consumedAt: consumedAt || undefined,
+  });
 };
 
 export default createMeal;

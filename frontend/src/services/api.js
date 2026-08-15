@@ -8,13 +8,27 @@ const api = async (endpoint, options = {}) => {
     ...options.headers,
   };
 
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
-    ...options,
-    headers,
-    credentials: "include",
-  });
+  let response;
 
-  const data = await response.json();
+  try {
+    response = await fetch(`${BASE_URL}${endpoint}`, {
+      ...options,
+      headers,
+      credentials: "include",
+    });
+  } catch {
+    throw new Error("Unable to reach the server.");
+  }
+
+  let data = {};
+
+  try {
+    data = await response.json();
+  } catch {
+    if (!response.ok) {
+      throw new Error("Something went wrong");
+    }
+  }
 
   if (!response.ok) {
     throw new Error(data.message || "Something went wrong");

@@ -7,6 +7,7 @@ import {
   extractTextFromPdf,
   parseMealPdfText,
 } from "../utils/parseMealPdf.js";
+import { handleRouteError } from "../utils/handleRouteError.js";
 
 const mealRouter = express.Router();
 
@@ -42,11 +43,11 @@ mealRouter.post("/create", userAuth, async (req, res) => {
       meal,
     });
   } catch (e) {
-    console.log("Error:", e);
-
-    return res.status(500).json({
-      message: "Something went wrong while meal creation !!",
-    });
+    return handleRouteError(
+      res,
+      e,
+      "Something went wrong while meal creation !!",
+    );
   }
 });
 
@@ -76,39 +77,59 @@ mealRouter.post(
       const { meals, skippedRows } = parseMealPdfText(text);
 
       const importedMeals = [];
+      const importErrors = [...skippedRows];
 
       for (const mealData of meals) {
-        const meal = await createMeal({
-          userId: req.user._id,
-          ...mealData,
-        });
+        try {
+          const meal = await createMeal({
+            userId: req.user._id,
+            ...mealData,
+          });
 
-        importedMeals.push(meal);
+          importedMeals.push(meal);
+        } catch (rowError) {
+          importErrors.push({
+            foodName: mealData.foodName ?? "Unknown meal",
+            reason: rowError.message,
+          });
+        }
+      }
+
+      if (importedMeals.length === 0) {
+        return res.status(400).json({
+          message: "No meals could be imported from the PDF",
+          skipped: importErrors.length,
+          skippedRows: importErrors,
+        });
       }
 
       return res.status(201).json({
         message: "PDF imported successfully",
         imported: importedMeals.length,
-        skipped: skippedRows.length,
-        skippedRows,
+        skipped: importErrors.length,
+        skippedRows: importErrors,
         meals: importedMeals,
       });
     } catch (error) {
-      console.log("PDF import error:", error);
-
-      if (error.message?.includes("Only PDF files are allowed")) {
-        return res.status(400).json({ message: error.message });
-      }
-
       if (error.code === "LIMIT_FILE_SIZE") {
         return res.status(400).json({
           message: "PDF must be 10MB or smaller",
         });
       }
 
-      return res.status(400).json({
-        message: error.message || "Something went wrong while importing the PDF",
-      });
+      if (
+        typeof error.message === "string" &&
+        (error.message.includes("No valid meal rows") ||
+          error.message.includes("Only PDF files are allowed"))
+      ) {
+        return res.status(400).json({ message: error.message });
+      }
+
+      return handleRouteError(
+        res,
+        error,
+        "Could not import the PDF. Check the format and try again.",
+      );
     }
   },
 );
@@ -194,11 +215,11 @@ mealRouter.get("/get", userAuth, async (req, res) => {
       totalPages,
     });
   } catch (e) {
-    console.log("Error:", e);
-
-    return res.status(500).json({
-      message: "Something went wrong while getting meal data",
-    });
+    return handleRouteError(
+      res,
+      e,
+      "Something went wrong while getting meal data",
+    );
   }
 });
 
@@ -220,11 +241,7 @@ mealRouter.get("/get/:id", userAuth, async (req, res) => {
       meal,
     });
   } catch (e) {
-    console.log("Error:", e);
-
-    return res.status(500).json({
-      message: "Something went wrong while getting meal",
-    });
+    return handleRouteError(res, e, "Something went wrong while getting meal");
   }
 });
 
@@ -287,11 +304,11 @@ mealRouter.patch("/update/:id", userAuth, async (req, res) => {
       meal,
     });
   } catch (e) {
-    console.log("Error:", e);
-
-    return res.status(500).json({
-      message: "Something went wrong while updating meal data",
-    });
+    return handleRouteError(
+      res,
+      e,
+      "Something went wrong while updating meal data",
+    );
   }
 });
 
@@ -312,11 +329,11 @@ mealRouter.delete("/delete/:id", userAuth, async (req, res) => {
       message: "Meal deleted successfully",
     });
   } catch (e) {
-    console.log("Error:", e);
-
-    return res.status(500).json({
-      message: "Something went wrong while deleting meal data",
-    });
+    return handleRouteError(
+      res,
+      e,
+      "Something went wrong while deleting meal data",
+    );
   }
 });
 

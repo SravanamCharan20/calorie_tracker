@@ -1,6 +1,7 @@
 import express from "express";
 import Goal from "../models/goal.model.js";
 import userAuth from "../middlewares/auth.middleware.js";
+import { handleRouteError } from "../utils/handleRouteError.js";
 
 const goalRouter = express.Router();
 
@@ -19,11 +20,11 @@ goalRouter.get("/get", userAuth, async (req, res) => {
       goal: goalData,
     });
   } catch (error) {
-    console.log("Error:", error);
-
-    return res.status(500).json({
-      message: "Something went wrong while getting goal data",
-    });
+    return handleRouteError(
+      res,
+      error,
+      "Something went wrong while getting goal data",
+    );
   }
 });
 
@@ -89,11 +90,7 @@ goalRouter.patch("/update", userAuth, async (req, res) => {
       goal,
     });
   } catch (e) {
-    console.log("Error:", e);
-
-    return res.status(500).json({
-      message: "Something went wrong while updating goal",
-    });
+    return handleRouteError(res, e, "Something went wrong while updating goal");
   }
 });
 

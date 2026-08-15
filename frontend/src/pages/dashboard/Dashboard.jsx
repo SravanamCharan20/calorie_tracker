@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../../utils/AuthContext.jsx";
-import { getGoalSafe } from "../../services/goalService.js";
+import { getGoal } from "../../services/goalService.js";
 import { getMeals } from "../../services/mealService.js";
 import {
   getStartOfLocalDay,
@@ -52,7 +52,7 @@ const Dashboard = () => {
 
       const [goalResponse, todayMealsResponse, weeklyMealsResponse] =
         await Promise.all([
-          getGoalSafe(),
+          getGoal(),
           getMeals({
             startDate: startOfToday.toISOString(),
             endDate: endOfToday.toISOString(),

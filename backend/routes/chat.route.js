@@ -63,7 +63,7 @@ chatRouter.post("/", userAuth, async (req, res) => {
       response: finalInteraction.output_text,
     });
   } catch (error) {
-    console.log("Chat error:", error);
+    console.error("Chat error:", error);
 
     return res.status(500).json({
       message: "Something went wrong while generating the response",

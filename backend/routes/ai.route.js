@@ -1,7 +1,7 @@
 import express from "express";
 import userAuth from "../middlewares/auth.middleware.js";
 import upload from "../middlewares/upload.middleware.js";
-import {gemini} from "../config/geminiConfig.js";
+import { gemini } from "../config/geminiConfig.js";
 
 const aiRouter = express.Router();
 
@@ -69,7 +69,23 @@ const nutritionSchema = {
 aiRouter.post(
   "/extract",
   userAuth,
-  upload.single("image"),
+  (req, res, next) => {
+    upload.single("image")(req, res, (uploadError) => {
+      if (uploadError) {
+        if (uploadError.code === "LIMIT_FILE_SIZE") {
+          return res.status(400).json({
+            message: "Image must be 5MB or smaller",
+          });
+        }
+
+        return res.status(400).json({
+          message: uploadError.message,
+        });
+      }
+
+      next();
+    });
+  },
   async (req, res) => {
     try {
       if (!req.file) {
@@ -123,7 +139,7 @@ aiRouter.post(
         nutrition: nutritionData,
       });
     } catch (error) {
-      console.log("Gemini error:", error);
+      console.error("Gemini error:", error);
 
       return res.status(500).json({
         message: "Something went wrong while extracting nutrition",

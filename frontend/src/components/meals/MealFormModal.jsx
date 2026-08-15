@@ -64,12 +64,37 @@ const validateImageFile = (file) => {
   return null;
 };
 
-const MealFormModal = ({ meal, onClose, onSave, isSaving }) => {
+const validateMealForm = (form) => {
+  if (!form.foodName.trim()) {
+    return "Food name is required.";
+  }
+
+  const numericFields = [
+    { key: "quantity", label: "Quantity" },
+    { key: "calories", label: "Calories" },
+    { key: "protein", label: "Protein" },
+    { key: "carbs", label: "Carbs" },
+    { key: "fat", label: "Fat" },
+  ];
+
+  for (const { key, label } of numericFields) {
+    const value = Number(form[key]);
+
+    if (form[key] === "" || !Number.isFinite(value) || value < 0) {
+      return `${label} must be a valid non-negative number.`;
+    }
+  }
+
+  return null;
+};
+
+const MealFormModal = ({ meal, onClose, onSave, isSaving, saveError }) => {
   const [form, setForm] = useState(() => getInitialForm(meal));
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isExtracting, setIsExtracting] = useState(false);
   const [extractError, setExtractError] = useState("");
+  const [formError, setFormError] = useState("");
   const fileInputRef = useRef(null);
   const isEditing = Boolean(meal);
 
@@ -83,6 +108,7 @@ const MealFormModal = ({ meal, onClose, onSave, isSaving }) => {
 
   const handleChange = (field) => (e) => {
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
+    setFormError("");
   };
 
   const handleImageSelect = (e) => {
@@ -169,6 +195,14 @@ const MealFormModal = ({ meal, onClose, onSave, isSaving }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setFormError("");
+
+    const validationError = validateMealForm(form);
+
+    if (validationError) {
+      setFormError(validationError);
+      return;
+    }
 
     onSave({
       mealType: form.mealType,
@@ -393,6 +427,15 @@ const MealFormModal = ({ meal, onClose, onSave, isSaving }) => {
               ))}
             </div>
           </section>
+
+          {(formError || saveError) && (
+            <p
+              role="alert"
+              className="rounded-2xl border border-error/30 bg-error/10 px-4 py-3 text-sm text-error"
+            >
+              {formError || saveError}
+            </p>
+          )}
 
           <div className="flex justify-end gap-3 pt-2">
             <button

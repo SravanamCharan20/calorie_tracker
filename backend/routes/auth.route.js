@@ -1,26 +1,48 @@
 import express from "express";
+import validator from "validator";
 import User from "../models/user.model.js";
 import userAuth from "../middlewares/auth.middleware.js";
 import Goal from "../models/goal.model.js";
+import { handleRouteError } from "../utils/handleRouteError.js";
 
 const authRouter = express.Router();
+
 authRouter.post("/signup", async (req, res) => {
   try {
     const { username, email, password } = req.body;
-    if (!username || !email || !password) {
+
+    if (!username?.trim() || !email?.trim() || !password) {
       return res.status(400).json({ message: "All fields are required !!" });
     }
 
-    const user = await User.findOne({ email });
+    if (password.length < 6) {
+      return res.status(400).json({
+        message: "Password must be at least 6 characters long",
+      });
+    }
+
+    if (!validator.isEmail(email.trim())) {
+      return res.status(400).json({
+        message: "Please enter a valid email",
+      });
+    }
+
+    const user = await User.findOne({ email: email.trim() });
+
     if (user) {
       return res
         .status(400)
         .json({ message: "Email is already registered !!" });
     }
 
-    const newUser = await User.create({ username, email, password });
+    const newUser = await User.create({
+      username: username.trim(),
+      email: email.trim(),
+      password,
+    });
 
-    const goal = await Goal.create({ userId: newUser._id });
+    await Goal.create({ userId: newUser._id });
+
     return res.status(201).json({
       message: "Signup successful !!",
       user: {
@@ -30,27 +52,30 @@ authRouter.post("/signup", async (req, res) => {
       },
     });
   } catch (error) {
-    console.log("Error : ", error);
-    return res.status(500).json({ message: "Error While Signup !!" });
+    return handleRouteError(res, error, "Error While Signup !!");
   }
 });
 
 authRouter.post("/signin", async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) {
+
+    if (!email?.trim() || !password) {
       return res.status(400).json({ message: "All fields are required !!" });
     }
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: "User not found !!" });
+    if (!validator.isEmail(email.trim())) {
+      return res.status(400).json({ message: "Please enter a valid email" });
     }
 
-    const isPasswordMatched = await user.checkPass(password);
+    const user = await User.findOne({ email: email.trim() });
+    const isPasswordMatched =
+      user && (await user.checkPass(password));
+
     if (!isPasswordMatched) {
-      return res.status(400).json({ message: "Wrong Credentails !!" });
+      return res.status(400).json({ message: "Invalid email or password" });
     }
+
     const token = await user.createJWT();
 
     const isProd = process.env.NODE_ENV === "production";
@@ -61,10 +86,9 @@ authRouter.post("/signin", async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(200).json({ message: "User login successfull !!",token : token });
+    return res.status(200).json({ message: "User login successfull !!" });
   } catch (error) {
-    console.log("Error : ", error);
-    return res.status(500).json({ message: "Error While Signin !!" });
+    return handleRouteError(res, error, "Error While Signin !!");
   }
 });
 
