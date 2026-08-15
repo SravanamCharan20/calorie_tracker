@@ -22,13 +22,12 @@ export const getMeals = async (params = {}) => {
     query.append("mealType", params.mealType);
   }
 
-  if (params.page) {
-    query.append("page", params.page);
+  if (params.search?.trim()) {
+    query.append("search", params.search.trim());
   }
 
-  if (params.limit) {
-    query.append("limit", params.limit);
-  }
+  query.append("page", String(params.page ?? 1));
+  query.append("limit", String(params.limit ?? 10));
 
   const queryString = query.toString();
 
@@ -51,5 +50,15 @@ export const updateMeal = async (mealId, mealData) => {
 export const deleteMeal = async (mealId) => {
   return await api(`/meals/delete/${mealId}`, {
     method: "DELETE",
+  });
+};
+
+export const importMealsFromPdf = async (pdfFile) => {
+  const formData = new FormData();
+  formData.append("pdf", pdfFile);
+
+  return await api("/meals/import/pdf", {
+    method: "POST",
+    body: formData,
   });
 };

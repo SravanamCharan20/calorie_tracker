@@ -71,19 +71,29 @@ const Chat = () => {
 
   return (
     <DashboardLayout chatMode>
-      <div className="flex h-full min-h-0 flex-1 flex-col">
-        <section className="mb-3 shrink-0">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="text-xs font-medium tracking-[0.12em] text-subtle uppercase">
-                AI assistant
-              </p>
-              <h1 className="mt-1 text-xl font-bold tracking-tight text-white sm:text-2xl">
-                Chat
-              </h1>
-              <p className="mt-0.5 text-sm text-muted">
-                Hi {user?.username}, ask anything about your nutrition.
-              </p>
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl border border-border/80 bg-card shadow-[0_24px_80px_rgba(0,0,0,0.45)] ring-1 ring-white/[0.04]">
+          <div
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.04),transparent_55%)]"
+            aria-hidden="true"
+          />
+
+          <header className="relative z-10 flex shrink-0 items-center justify-between gap-4 border-b border-border/70 px-5 py-4 sm:px-6">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-border bg-card-elevated text-white">
+                <SparkIcon />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[11px] font-medium tracking-[0.14em] text-subtle uppercase">
+                  AI assistant
+                </p>
+                <h1 className="truncate text-lg font-semibold tracking-tight text-white sm:text-xl">
+                  Nutrition chat
+                </h1>
+                <p className="truncate text-sm text-muted">
+                  Hi {user?.username}, ask anything about your nutrition.
+                </p>
+              </div>
             </div>
 
             {hasMessages && (
@@ -91,29 +101,25 @@ const Chat = () => {
                 type="button"
                 disabled={isSending}
                 onClick={() => setMessages([])}
-                className="shrink-0 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:text-white disabled:opacity-50 sm:px-4 sm:py-2 sm:text-sm"
+                className="shrink-0 rounded-full border border-border bg-card-elevated/80 px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:border-border-focus hover:text-white disabled:opacity-50 sm:px-4 sm:py-2 sm:text-sm"
               >
                 Clear chat
               </button>
             )}
-          </div>
-        </section>
+          </header>
 
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border bg-card">
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+          <div className="relative z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain">
             {!hasMessages ? (
-              <div className="flex h-full min-h-0 items-center justify-center">
-                <ChatWelcome
-                  onSelectSuggestion={handleSendMessage}
-                  disabled={isSending}
-                />
-              </div>
+              <ChatWelcome
+                onSelectSuggestion={handleSendMessage}
+                disabled={isSending}
+              />
             ) : (
-              <div className="space-y-5 px-4 py-5 sm:px-6 sm:py-6">
+              <div className="space-y-6 px-4 py-5 sm:px-6 sm:py-6">
                 {messages.map((message) => (
                   <ChatMessage key={message.id} message={message} />
                 ))}
-                <div ref={messagesEndRef} />
+                <div ref={messagesEndRef} className="h-1" />
               </div>
             )}
           </div>
@@ -124,5 +130,19 @@ const Chat = () => {
     </DashboardLayout>
   );
 };
+
+const SparkIcon = () => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.75"
+    aria-hidden="true"
+  >
+    <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z" />
+  </svg>
+);
 
 export default Chat;

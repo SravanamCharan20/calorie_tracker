@@ -1,7 +1,12 @@
 import express from "express";
 import Meal from "../models/meal.model.js";
 import userAuth from "../middlewares/auth.middleware.js";
+import pdfUpload from "../middlewares/pdfUpload.middleware.js";
 import createMeal from "../config/tools/mealTool.js";
+import {
+  extractTextFromPdf,
+  parseMealPdfText,
+} from "../utils/parseMealPdf.js";
 
 const mealRouter = express.Router();
 
@@ -45,9 +50,79 @@ mealRouter.post("/create", userAuth, async (req, res) => {
   }
 });
 
+mealRouter.post(
+  "/import/pdf",
+  userAuth,
+  (req, res, next) => {
+    pdfUpload.single("pdf")(req, res, (uploadError) => {
+      if (uploadError) {
+        return res.status(400).json({
+          message: uploadError.message,
+        });
+      }
+
+      next();
+    });
+  },
+  async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({
+          message: "PDF file is required",
+        });
+      }
+
+      const text = await extractTextFromPdf(req.file.buffer);
+      const { meals, skippedRows } = parseMealPdfText(text);
+
+      const importedMeals = [];
+
+      for (const mealData of meals) {
+        const meal = await createMeal({
+          userId: req.user._id,
+          ...mealData,
+        });
+
+        importedMeals.push(meal);
+      }
+
+      return res.status(201).json({
+        message: "PDF imported successfully",
+        imported: importedMeals.length,
+        skipped: skippedRows.length,
+        skippedRows,
+        meals: importedMeals,
+      });
+    } catch (error) {
+      console.log("PDF import error:", error);
+
+      if (error.message?.includes("Only PDF files are allowed")) {
+        return res.status(400).json({ message: error.message });
+      }
+
+      if (error.code === "LIMIT_FILE_SIZE") {
+        return res.status(400).json({
+          message: "PDF must be 10MB or smaller",
+        });
+      }
+
+      return res.status(400).json({
+        message: error.message || "Something went wrong while importing the PDF",
+      });
+    }
+  },
+);
+
 mealRouter.get("/get", userAuth, async (req, res) => {
   try {
-    const { startDate, endDate, mealType, page = 1, limit = 10 } = req.query;
+    const {
+      startDate,
+      endDate,
+      mealType,
+      search,
+      page = 1,
+      limit = 10,
+    } = req.query;
 
     const currentPage = Number(page);
     const pageLimit = Number(limit);
@@ -69,6 +144,10 @@ mealRouter.get("/get", userAuth, async (req, res) => {
 
     if (mealType) {
       filter.mealType = mealType;
+    }
+
+    if (search?.trim()) {
+      filter.foodName = { $regex: search.trim(), $options: "i" };
     }
 
     if (startDate || endDate) {
@@ -99,7 +178,7 @@ mealRouter.get("/get", userAuth, async (req, res) => {
 
     const pageSkip = pageLimit * (currentPage - 1);
     const total = await Meal.countDocuments(filter);
-    const totalPages = Math.ceil(total / pageLimit);
+    const totalPages = total === 0 ? 1 : Math.ceil(total / pageLimit);
 
     const meals = await Meal.find(filter)
       .sort({ consumedAt: -1 })

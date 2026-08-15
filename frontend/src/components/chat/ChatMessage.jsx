@@ -14,8 +14,8 @@ const ChatMessage = ({ message }) => {
   if (isUser) {
     return (
       <div className="flex justify-end">
-        <div className="max-w-[85%] sm:max-w-[70%]">
-          <div className="rounded-2xl bg-white px-4 py-3 text-sm leading-relaxed text-black">
+        <div className="max-w-[85%] sm:max-w-[72%]">
+          <div className="rounded-[1.25rem] rounded-br-md bg-white px-4 py-3 text-sm leading-relaxed text-black shadow-[0_8px_24px_rgba(0,0,0,0.18)]">
             {message.content}
           </div>
           <p className="mt-1.5 text-right text-[11px] text-subtle">
@@ -32,12 +32,12 @@ const ChatMessage = ({ message }) => {
         <AssistantIcon />
       </div>
 
-      <div className="min-w-0 flex-1 max-w-[85%] sm:max-w-[75%]">
+      <div className="min-w-0 flex-1 max-w-[85%] sm:max-w-[78%]">
         <article
-          className={`rounded-2xl border px-4 py-3.5 sm:px-5 sm:py-4 ${
+          className={`rounded-[1.25rem] rounded-tl-md border px-4 py-3.5 sm:px-5 sm:py-4 ${
             isError
               ? "border-error/30 bg-error/10"
-              : "border-border bg-card"
+              : "border-border/80 bg-card-elevated/80"
           }`}
         >
           <div className="mb-3 flex items-center gap-2">
@@ -45,7 +45,7 @@ const ChatMessage = ({ message }) => {
               Nutrition assistant
             </span>
             {isLoading && (
-              <span className="rounded-full bg-card-elevated px-2 py-0.5 text-[10px] font-medium text-muted">
+              <span className="rounded-full border border-border bg-card px-2 py-0.5 text-[10px] font-medium text-muted">
                 Thinking
               </span>
             )}

@@ -26,10 +26,10 @@ const ChatInput = ({ onSend, disabled }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="shrink-0 border-t border-border bg-card/80 px-4 py-3 backdrop-blur-sm sm:px-5"
+      className="relative z-10 shrink-0 border-t border-border/70 bg-card/95 px-4 py-4 backdrop-blur-md sm:px-6"
     >
-      <div className="mx-auto flex max-w-3xl items-end gap-3">
-        <div className="flex-1 rounded-2xl border border-border bg-card-elevated px-4 py-3 focus-within:border-border-focus">
+      <div className="flex items-end gap-3">
+        <div className="flex min-h-[52px] flex-1 items-end gap-3 rounded-[1.35rem] border border-border bg-card-elevated px-4 py-3 shadow-inner shadow-black/20 transition-colors focus-within:border-border-focus focus-within:ring-1 focus-within:ring-white/10">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -37,30 +37,31 @@ const ChatInput = ({ onSend, disabled }) => {
             disabled={disabled}
             rows={1}
             placeholder="Ask about meals, goals, or nutrition…"
-            className="max-h-32 w-full resize-none bg-transparent text-sm leading-relaxed text-white placeholder:text-subtle outline-none disabled:opacity-50"
+            className="max-h-32 min-h-[24px] w-full resize-none bg-transparent text-sm leading-relaxed text-white placeholder:text-subtle outline-none disabled:opacity-50"
           />
-          <p className="mt-2 text-[11px] text-subtle">
-            Press Enter to send · Shift + Enter for a new line
-          </p>
-        </div>
 
-        <button
-          type="submit"
-          disabled={disabled || !input.trim()}
-          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-black transition-opacity hover:opacity-90 disabled:opacity-40"
-          aria-label="Send message"
-        >
-          <SendIcon />
-        </button>
+          <button
+            type="submit"
+            disabled={disabled || !input.trim()}
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-black transition-all hover:scale-105 hover:opacity-90 disabled:scale-100 disabled:opacity-40"
+            aria-label="Send message"
+          >
+            <SendIcon />
+          </button>
+        </div>
       </div>
+
+      <p className="mt-2 text-center text-[11px] text-subtle sm:text-left">
+        Press Enter to send · Shift + Enter for a new line
+      </p>
     </form>
   );
 };
 
 const SendIcon = () => (
   <svg
-    width="18"
-    height="18"
+    width="16"
+    height="16"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
