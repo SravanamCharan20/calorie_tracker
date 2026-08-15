@@ -4,6 +4,11 @@ import { useAuth } from "../../utils/AuthContext.jsx";
 import { getGoalSafe } from "../../services/goalService.js";
 import { getMeals } from "../../services/mealService.js";
 import {
+  getStartOfLocalDay,
+  getEndOfLocalDay,
+  getLocalDayOffset,
+} from "../../utils/dateUtils.js";
+import {
   calculateNutritionTotals,
   calculateNutritionProgress,
   calculateWeeklyCalories,
@@ -41,17 +46,9 @@ const Dashboard = () => {
       setLoading(true);
       setError("");
 
-      const today = new Date();
-
-      const startOfToday = new Date(today);
-      startOfToday.setHours(0, 0, 0, 0);
-
-      const endOfToday = new Date(today);
-      endOfToday.setHours(23, 59, 59, 999);
-
-      const startOfWeek = new Date(today);
-      startOfWeek.setDate(today.getDate() - 6);
-      startOfWeek.setHours(0, 0, 0, 0);
+      const startOfToday = getStartOfLocalDay();
+      const endOfToday = getEndOfLocalDay();
+      const startOfWeek = getLocalDayOffset(-6);
 
       const [goalResponse, todayMealsResponse, weeklyMealsResponse] =
         await Promise.all([

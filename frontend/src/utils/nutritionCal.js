@@ -1,3 +1,8 @@
+import {
+  getLocalDateKey,
+  getLocalDayOffset,
+} from "./dateUtils.js";
+
 export const calculateNutritionTotals = (meals) => {
   return meals.reduce(
     (totals, meal) => {
@@ -57,36 +62,30 @@ export const calculateNutritionProgress = (totals, goal) => {
 };
 
 export const calculateWeeklyCalories = (meals) => {
-    const today = new Date();
-    const weeklyCalories = [];
-  
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(today.getDate() - i);
-  
-      const dateKey = date.toISOString().split("T")[0];
-  
-      const calories = meals
-        .filter((meal) => {
-          const mealDate = new Date(meal.consumedAt)
-            .toISOString()
-            .split("T")[0];
-  
-          return mealDate === dateKey;
-        })
-        .reduce((total, meal) => total + meal.calories, 0);
-  
-      weeklyCalories.push({
-        date: dateKey,
-        day: date.toLocaleDateString("en-US", {
-          weekday: "short",
-        }),
-        calories,
-      });
-    }
-  
-    return weeklyCalories;
-  };
+  const today = new Date();
+  const weeklyCalories = [];
+
+  for (let i = 6; i >= 0; i--) {
+    const date = getLocalDayOffset(-i, today);
+    const dateKey = getLocalDateKey(date);
+
+    const calories = meals
+      .filter(
+        (meal) => getLocalDateKey(new Date(meal.consumedAt)) === dateKey,
+      )
+      .reduce((total, meal) => total + meal.calories, 0);
+
+    weeklyCalories.push({
+      date: dateKey,
+      day: date.toLocaleDateString("en-US", {
+        weekday: "short",
+      }),
+      calories,
+    });
+  }
+
+  return weeklyCalories;
+};
 
 
   export const calculateMacroDistribution = (meals) => {
@@ -147,15 +146,12 @@ export const calculateWeeklyMacros = (meals) => {
   const weeklyMacros = [];
 
   for (let i = 6; i >= 0; i--) {
-    const date = new Date(today);
-    date.setDate(today.getDate() - i);
+    const date = getLocalDayOffset(-i, today);
+    const dateKey = getLocalDateKey(date);
 
-    const dateKey = date.toISOString().split("T")[0];
-
-    const dayMeals = meals.filter((meal) => {
-      const mealDate = new Date(meal.consumedAt).toISOString().split("T")[0];
-      return mealDate === dateKey;
-    });
+    const dayMeals = meals.filter(
+      (meal) => getLocalDateKey(new Date(meal.consumedAt)) === dateKey,
+    );
 
     const macros = calculateMacroDistribution(dayMeals);
 

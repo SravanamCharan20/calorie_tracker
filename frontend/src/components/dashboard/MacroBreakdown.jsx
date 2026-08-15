@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { getLocalDateKey } from "../../utils/dateUtils.js";
 
 const macroColors = {
   protein: "#7a9e7e",
@@ -29,7 +30,7 @@ const MacroBreakdown = ({
     1,
   );
 
-  const todayKey = new Date().toISOString().split("T")[0];
+  const todayKey = getLocalDateKey();
 
   return (
     <article className="flex h-full flex-col rounded-2xl border border-border bg-card p-6 sm:p-7">
