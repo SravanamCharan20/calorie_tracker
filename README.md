@@ -6,6 +6,22 @@ Full stack app for logging meals and tracking daily calories / macros. You can a
 
 Frontend is React + Vite. Backend is Express + MongoDB. Auth uses JWT in an http-only cookie. Image extract and chat use Gemini.
 
+## What is done
+
+Required:
+
+- Goal setting — daily calorie, protein, carb, fat targets and a weight goal. A default goal is created on signup.
+- Meal entry — breakfast, lunch, dinner, snacks. Food name, quantity (grams), calories, macros, micros.
+- Time-range listing — meals page with date range, meal type filter, search, and pagination.
+- Nutrition reports — dashboard with weekly calorie trend, macros by day/week, micronutrient summary, and goal vs actual.
+- AI calorie extraction — upload a food photo or nutrition label, Gemini fills the meal form.
+
+Bonus:
+
+- Chat — log meals, check goals, ask nutrition questions, and get a weekly summary in natural language (Gemini tools).
+- Multi-user — signup / signin, JWT cookie, each user only sees their own data.
+- Bulk import — upload a tabular PDF and import meal rows. Sample file is in `samples/`.
+
 ## What you need
 
 - Node.js (18+)
