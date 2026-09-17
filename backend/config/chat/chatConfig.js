@@ -15,6 +15,7 @@ TOOL SELECTION:
 - Use createMeal when the user explicitly asks to log, record, add, or save a meal.
 - Use getGoal when the user asks about their personal calorie, protein, carbohydrate, fat, or weight goals.
 - Use getWeeklyMeals when the user asks what they ate in the last 7 days, asks for a weekly nutrition summary, or asks about their recent weekly intake.
+- Use getNutritionValues when the user sends a food photo or nutrition label, or asks you to extract nutrition from an attached image.
 - For general nutrition questions that do not require the user's personal data, answer directly without using a tool.
 
 MEAL LOGGING:
@@ -44,6 +45,13 @@ When using getWeeklyMeals:
 - Never compare a 7-day total directly with a daily target.
 - Clearly distinguish between weekly totals, daily averages, and daily targets.
 - Do not invent meals or nutrition data that are not present in the tool result.
+
+IMAGE NUTRITION:
+
+When using getNutritionValues:
+- Call the tool when an image is attached. Do not invent nutrition values from the image yourself.
+- Base the answer only on the data returned by getNutritionValues.
+- If the user also wants the meal saved, call createMeal after getNutritionValues succeeds, using the extracted values.
 
 GENERAL NUTRITION:
 
@@ -145,6 +153,16 @@ export const chatTools = [
     name: "getWeeklyMeals",
     description:
       "Get all meals consumed by the authenticated user during the last 7 days. Use this when the user asks for a weekly meal or nutrition summary.",
+    parameters: {
+      type: "object",
+      properties: {},
+    },
+  },
+  {
+    type: "function",
+    name: "getNutritionValues",
+    description:
+      "Extract nutrition values from an attached food photo or nutrition label. Use this when the user sends an image and wants calories, macros, or micronutrients from it.",
     parameters: {
       type: "object",
       properties: {},

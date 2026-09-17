@@ -16,6 +16,11 @@ const ChatMessage = ({ message }) => {
       <div className="flex justify-end">
         <div className="max-w-[85%] sm:max-w-[72%]">
           <div className="rounded-[1.25rem] rounded-br-md bg-white px-4 py-3 text-sm leading-relaxed text-black shadow-[0_8px_24px_rgba(0,0,0,0.18)]">
+            {message.imageName && (
+              <p className="mb-1.5 text-[11px] font-medium text-black/60">
+                {message.imageName}
+              </p>
+            )}
             {message.content}
           </div>
           <p className="mt-1.5 text-right text-[11px] text-subtle">

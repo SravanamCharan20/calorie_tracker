@@ -28,15 +28,18 @@ const Chat = () => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
-  const handleSendMessage = async (text) => {
-    const userMessage = createMessage("user", text);
+  const handleSendMessage = async (text, imageFile) => {
+    const userMessage = {
+      ...createMessage("user", text),
+      ...(imageFile ? { imageName: imageFile.name } : {}),
+    };
     const loadingMessage = createMessage("assistant", "", "loading");
 
     setMessages((prev) => [...prev, userMessage, loadingMessage]);
     setIsSending(true);
 
     try {
-      const response = await sendChatMessage(text);
+      const response = await sendChatMessage(text, imageFile);
 
       setMessages((prev) =>
         prev.map((message) =>
