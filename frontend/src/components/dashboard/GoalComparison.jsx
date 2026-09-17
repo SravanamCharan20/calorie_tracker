@@ -1,3 +1,5 @@
+import { formatCalories, formatGrams } from "../../utils/nutritionCal.js";
+
 const comparisonItems = [
   { key: "calories", label: "Calories", unit: "kcal", barClass: "bg-white" },
   { key: "protein", label: "Protein", unit: "g", barClass: "bg-protein" },
@@ -18,6 +20,7 @@ const GoalComparison = ({ goalComparison }) => {
       <div className="space-y-5">
         {comparisonItems.map(({ key, label, unit, barClass }) => {
           const item = goalComparison[key];
+          const formatValue = unit === "kcal" ? formatCalories : formatGrams;
           const percentage =
             item.target > 0
               ? Math.min((item.actual / item.target) * 100, 100)
@@ -28,7 +31,7 @@ const GoalComparison = ({ goalComparison }) => {
               <div className="mb-2 flex items-center justify-between text-sm">
                 <span className="font-medium text-white">{label}</span>
                 <span className="text-muted">
-                  {item.actual} / {item.target}
+                  {formatValue(item.actual)} / {formatValue(item.target)}
                   {unit === "kcal" ? "kcal" : "g"}
                 </span>
               </div>

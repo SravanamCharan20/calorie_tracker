@@ -1,4 +1,5 @@
 import EmptyState from "./EmptyState";
+import { formatCalories, formatGrams } from "../../utils/nutritionCal.js";
 
 const formatMealTime = (consumedAt) => {
   return new Date(consumedAt).toLocaleTimeString("en-US", {
@@ -49,10 +50,11 @@ const RecentMeals = ({ recentMeals }) => (
 
             <div className="flex items-center gap-6 sm:justify-end">
               <span className="text-sm font-semibold text-white">
-                {meal.calories} kcal
+                {formatCalories(meal.calories)} kcal
               </span>
               <span className="hidden text-xs text-muted sm:inline">
-                P {meal.protein}g · C {meal.carbs}g · F {meal.fat}g
+                P {formatGrams(meal.protein)}g · C {formatGrams(meal.carbs)}g · F{" "}
+                {formatGrams(meal.fat)}g
               </span>
             </div>
           </li>

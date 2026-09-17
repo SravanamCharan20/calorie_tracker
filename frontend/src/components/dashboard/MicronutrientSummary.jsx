@@ -1,4 +1,7 @@
-import { MICRONUTRIENT_REFERENCES } from "../../utils/nutritionCal.js";
+import {
+  MICRONUTRIENT_REFERENCES,
+  roundNutritionValue,
+} from "../../utils/nutritionCal.js";
 
 const micronutrientColors = {
   iron: "#b85450",
@@ -82,10 +85,11 @@ const MicronutrientSummary = ({ micronutrients }) => {
 };
 
 const formatAmount = (value, unit) => {
+  const rounded = roundNutritionValue(value, unit === "IU" ? 0 : 1);
   const formatted =
-    unit === "mg" && value >= 100
-      ? value.toLocaleString(undefined, { maximumFractionDigits: 0 })
-      : value.toLocaleString(undefined, { maximumFractionDigits: 1 });
+    unit === "mg" && rounded >= 100
+      ? rounded.toLocaleString(undefined, { maximumFractionDigits: 0 })
+      : rounded.toLocaleString(undefined, { maximumFractionDigits: 1 });
 
   return `${formatted}${unit}`;
 };

@@ -1,3 +1,5 @@
+import { formatCalories, formatGrams } from "../../utils/nutritionCal.js";
+
 const formatMealType = (mealType) => {
   if (mealType === "snacks") return "Snack";
   return mealType.charAt(0).toUpperCase() + mealType.slice(1);
@@ -59,11 +61,13 @@ const MealsTable = ({ meals, onEdit, onDelete }) => {
             </div>
 
             <p className="text-sm font-medium text-white md:text-center">
-              {meal.calories} kcal
+              {formatCalories(meal.calories)} kcal
             </p>
-            <p className="text-sm text-white md:text-center">{meal.protein}g</p>
             <p className="text-sm text-white md:text-center">
-              {meal.carbs}g / {meal.fat}g
+              {formatGrams(meal.protein)}g
+            </p>
+            <p className="text-sm text-white md:text-center">
+              {formatGrams(meal.carbs)}g / {formatGrams(meal.fat)}g
             </p>
 
             <div className="flex items-center gap-2 md:justify-end">

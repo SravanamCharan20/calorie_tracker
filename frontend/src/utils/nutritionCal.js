@@ -3,8 +3,27 @@ import {
   getLocalDayOffset,
 } from "./dateUtils.js";
 
+export const roundNutritionValue = (value, decimals = 1) => {
+  const numeric = Number(value);
+
+  if (!Number.isFinite(numeric)) {
+    return 0;
+  }
+
+  const factor = 10 ** decimals;
+  return Math.round((numeric + Number.EPSILON) * factor) / factor;
+};
+
+export const formatNutritionValue = (value, decimals = 1) => {
+  const rounded = roundNutritionValue(value, decimals);
+  return parseFloat(rounded.toFixed(decimals)).toString();
+};
+
+export const formatCalories = (value) => formatNutritionValue(value, 0);
+export const formatGrams = (value) => formatNutritionValue(value, 1);
+
 export const calculateNutritionTotals = (meals) => {
-  return meals.reduce(
+  const totals = meals.reduce(
     (totals, meal) => {
       totals.calories += meal.calories;
       totals.protein += meal.protein;
@@ -20,19 +39,35 @@ export const calculateNutritionTotals = (meals) => {
       fat: 0,
     },
   );
+
+  return {
+    calories: roundNutritionValue(totals.calories, 0),
+    protein: roundNutritionValue(totals.protein, 1),
+    carbs: roundNutritionValue(totals.carbs, 1),
+    fat: roundNutritionValue(totals.fat, 1),
+  };
 };
 
 export const calculateNutritionProgress = (totals, goal) => {
-  const caloriesRemaining = Math.max(
-    goal.dailyCalorieTarget - totals.calories,
+  const caloriesRemaining = roundNutritionValue(
+    Math.max(goal.dailyCalorieTarget - totals.calories, 0),
     0,
   );
 
-  const proteinRemaining = Math.max(goal.proteinTarget - totals.protein, 0);
+  const proteinRemaining = roundNutritionValue(
+    Math.max(goal.proteinTarget - totals.protein, 0),
+    1,
+  );
 
-  const carbsRemaining = Math.max(goal.carbTarget - totals.carbs, 0);
+  const carbsRemaining = roundNutritionValue(
+    Math.max(goal.carbTarget - totals.carbs, 0),
+    1,
+  );
 
-  const fatRemaining = Math.max(goal.fatTarget - totals.fat, 0);
+  const fatRemaining = roundNutritionValue(
+    Math.max(goal.fatTarget - totals.fat, 0),
+    1,
+  );
 
   const caloriePercentage = Math.min(
     (totals.calories / goal.dailyCalorieTarget) * 100,
@@ -90,7 +125,7 @@ export const calculateWeeklyCalories = (meals) => {
 
 
   export const calculateMacroDistribution = (meals) => {
-    return meals.reduce(
+    const totals = meals.reduce(
       (totals, meal) => {
         totals.protein += meal.protein;
         totals.carbs += meal.carbs;
@@ -104,6 +139,12 @@ export const calculateWeeklyCalories = (meals) => {
         fat: 0,
       },
     );
+
+    return {
+      protein: roundNutritionValue(totals.protein, 1),
+      carbs: roundNutritionValue(totals.carbs, 1),
+      fat: roundNutritionValue(totals.fat, 1),
+    };
   };
 
 
@@ -199,8 +240,8 @@ export const calculateGoalComparison = (totals, goal) => {
       calories: {
         target: goal.dailyCalorieTarget,
         actual: totals.calories,
-        remaining: Math.max(
-          goal.dailyCalorieTarget - totals.calories,
+        remaining: roundNutritionValue(
+          Math.max(goal.dailyCalorieTarget - totals.calories, 0),
           0,
         ),
       },
@@ -208,27 +249,27 @@ export const calculateGoalComparison = (totals, goal) => {
       protein: {
         target: goal.proteinTarget,
         actual: totals.protein,
-        remaining: Math.max(
-          goal.proteinTarget - totals.protein,
-          0,
+        remaining: roundNutritionValue(
+          Math.max(goal.proteinTarget - totals.protein, 0),
+          1,
         ),
       },
   
       carbs: {
         target: goal.carbTarget,
         actual: totals.carbs,
-        remaining: Math.max(
-          goal.carbTarget - totals.carbs,
-          0,
+        remaining: roundNutritionValue(
+          Math.max(goal.carbTarget - totals.carbs, 0),
+          1,
         ),
       },
   
       fat: {
         target: goal.fatTarget,
         actual: totals.fat,
-        remaining: Math.max(
-          goal.fatTarget - totals.fat,
-          0,
+        remaining: roundNutritionValue(
+          Math.max(goal.fatTarget - totals.fat, 0),
+          1,
         ),
       },
     };
